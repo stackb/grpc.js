@@ -178,7 +178,7 @@ function parseHeaders(raw) {
     if (gString.isEmptyOrWhitespace(list[i])) {
       continue;
     }
-    var keyValue = gString.splitLimit(list[i], ': ', 2);
+    var keyValue = gString.splitLimit(list[i], ': ', 1);
     if (headers[keyValue[0]]) {
       headers[keyValue[0]] += ', ' + keyValue[1];
     } else {

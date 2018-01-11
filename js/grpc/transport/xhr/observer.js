@@ -24,21 +24,25 @@ const asserts = goog.require('goog.asserts');
 class Observer {
 
   /**
-   * @param {!grpc.transport.Xhr} xhrPool
+   * @param {!grpc.transport.Xhr} xhrTransport
+   * @param {!grpc.Options} options
    * @param {string} name
    * @param {!function(T):!JspbByteSource} encoder A serializer function that can encode input messages.
    * @param {!function(!JspbByteSource):T} decoder A serializer function that can decode output messages.
    * @param {!StreamObserver<T>} observer
    * @param {?Endpoint=} opt_endpoint
    */
-  constructor(xhrPool, name, encoder, decoder, observer, opt_endpoint) {
+  constructor(xhrTransport, options, name, encoder, decoder, observer, opt_endpoint) {
 
     /**
-     * Instance of the xhrPool.
+     * Instance of the xhrTransport.
      * @private @type {!grpc.transport.Xhr}
      */
-    this.xhrPool_ = xhrPool;
+    this.xhrTransport_ = xhrTransport;
 
+    /** @private @type{!grpc.Options} */
+    this.options_ = options;
+    
     /** @private @type {string} */
     this.name_ = name;
 
@@ -184,19 +188,31 @@ class Observer {
     this.setStatus(GrpcStatus.UNKNOWN);
 
     // Get an xhr
-    const xhr = this.xhr_ = this.xhrPool_.createObject();
+    const xhr = this.xhr_ = this.xhrTransport_.createObject();
 
     xhr.open("POST", this.getEndpointUrl());
 
     xhr.responseType = "text";
     xhr.overrideMimeType("text/plain; charset=x-user-defined");
 
+    // Basic Headers for grpc
     xhr.setRequestHeader("content-type", "application/grpc-web+proto");
     xhr.setRequestHeader("x-grpc-web", "1");
     xhr.setRequestHeader("x-user-agent", "grpc-web-javascript/0.1");
 
+    // Per-transport headers
+    const perRpcHeaders = this.options_.getPerRpcMetadata()(this.getEndpointUrl());
+
+    // Headers for every call
+    if (perRpcHeaders) {
+      perRpcHeaders.forEach((val, key) => {
+        xhr.setRequestHeader(key, val);
+      });
+    }
+    
+    // Headers for this call
     if (this.headers_) {
-      this.headers_.forEach((key, val) => {
+      this.headers_.forEach((val, key) => {
         xhr.setRequestHeader(key, val);
       });
     }
@@ -215,7 +231,7 @@ class Observer {
     return;
   }
 
-
+  
   /**
    * Set the observer grpc status code.
    * @protected

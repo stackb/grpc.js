@@ -13,9 +13,7 @@ goog.require('jspb.ByteSource');
  *
  * @interface
  */
-grpc.Transport = function() {
-};
-
+grpc.Transport = function() {};
 
 /**
  * Call a remote procedure.
@@ -30,3 +28,4 @@ grpc.Transport = function() {
  * @template OUTPUT
  */
 grpc.Transport.prototype.call = function(name, encoder, decoder, observer, opt_endpoint) {};
+

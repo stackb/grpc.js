@@ -18,7 +18,6 @@ import (
 	"unicode/utf8"
 	"path/filepath"
 	"github.com/golang/protobuf/proto"
-	//"github.com/davecgh/go-spew/spew"
 	
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	plugin "github.com/golang/protobuf/protoc-gen-go/plugin"

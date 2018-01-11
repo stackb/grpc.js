@@ -12,6 +12,7 @@ closure_js_library(
     name = "grpc",
     srcs = [
         "transport.js",
+        #"metadata.js",
         "status.js",
         "endpoint.js",
     ],

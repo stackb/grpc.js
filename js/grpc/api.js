@@ -13,21 +13,16 @@ const XhrTransport = goog.require('grpc.transport.Xhr');
 class Api {
 
   /**
-   * @param {?GrpcOptions=} options
+   * @param {?GrpcOptions=} opt_options
    */
-  constructor(options) {
-
-    /**
-     * @private
-     * @type {!GrpcOptions}
-     */
-    this.options_ = options || {};
+  constructor(opt_options) {
 
     /**
      * @private
      * @type {!Transport}
      */
-    this.transport_ = new XhrTransport();
+    this.transport_ = new XhrTransport(opt_options || new GrpcOptions());
+
   }
 
   /**
@@ -35,13 +30,6 @@ class Api {
    */
   getTransport() {
     return this.transport_;
-  }
-
-  /**
-   * @return {!GrpcOptions}
-   */
-  getOptions() {
-    return this.options_;
   }
   
 }
