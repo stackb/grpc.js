@@ -12,10 +12,10 @@ goog.provide('grpc.stream.observer.Rejection');
 grpc.stream.observer.CallResolver = function() {
 };
 
-/**
- * @type {!goog.Promise<T>}
+/*
+ * type {!goog.Promise<T>}
  */
-grpc.stream.observer.CallResolver.prototype.promise;
+//grpc.stream.observer.CallResolver.prototype.promise;
 
 
 

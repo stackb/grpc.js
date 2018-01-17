@@ -3,7 +3,6 @@ goog.module('grpc.stream.observer.UnaryCallResolver');
 const CallResolver = goog.require('grpc.stream.observer.CallResolver');
 const EventTarget = goog.require('goog.events.EventTarget');
 const EventType = goog.require('grpc.stream.observer.EventType');
-const GoogPromise = goog.require('goog.Promise');
 const GrpcStatus = goog.require('grpc.Status');
 
 
@@ -19,15 +18,15 @@ const GrpcStatus = goog.require('grpc.Status');
  */
 class UnaryCallResolver extends EventTarget {
 
-  constructor() {
+  /**
+   * @param {!goog.promise.Resolver<T>} resolver
+   */
+  constructor(resolver) {
     super();
 
     /** @protected @type {!goog.promise.Resolver<T>} */
-    this.resolver = GoogPromise.withResolver();
+    this.resolver = resolver;
 
-    /** @public @type {!GoogPromise<T>} */
-    this.promise = this.resolver.promise;
-    
     /** @private @type {GrpcStatus|undefined} */
     this.status_ = undefined;
 
