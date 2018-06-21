@@ -18,7 +18,7 @@ class Api {
   constructor(opt_options) {
 
     /**
-     * @private
+     * @const @private
      * @type {!Transport}
      */
     this.transport_ = new XhrTransport(opt_options || new GrpcOptions());

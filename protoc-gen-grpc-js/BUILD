@@ -11,8 +11,8 @@ go_library(
         "@com_github_golang_protobuf//proto:go_default_library",
         "@com_github_golang_protobuf//protoc-gen-go/descriptor:go_default_library",
         "@com_github_golang_protobuf//protoc-gen-go/plugin:go_default_library",
-        "@com_github_davecgh_go_spew//spew:go_default_library",
     ],
+    importpath = "github.com/stackb/grpc.js/protoc-gen-grpc-js/generator",
 )
 
 go_binary(

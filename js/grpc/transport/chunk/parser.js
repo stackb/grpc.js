@@ -1,5 +1,5 @@
 /**
- * @fileoverview Test transport implementation.
+ * @fileoverview grpc frame chunk parser.
  *
  */
 goog.module('grpc.chunk.Parser');

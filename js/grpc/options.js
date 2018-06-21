@@ -1,6 +1,5 @@
 goog.module('grpc.Options');
 
-// What is the best api 
 /**
  * Dial options for grpc transports.
  */
@@ -12,26 +11,33 @@ class Options {
    * @param {?(function(string):?Map<string,string>)=} opt_per_rpc_metadata
    * @param {string=} opt_host
    * @param {number=} opt_port
+   * @param {string=} opt_path
    */
-  constructor(opt_per_rpc_metadata, opt_host, opt_port) {
+  constructor(opt_per_rpc_metadata, opt_host, opt_port, opt_path) {
 
     /**
-     * @private
+     * @const @private
      * @type {function(string):?Map<string,string>}
      */
     this.per_rpc_metadata_ = opt_per_rpc_metadata || function(endpoint) { return null; };
     
     /**
-     * @private
+     * @const @private
      * @type {string}
      */
     this.host_ = opt_host || "";
 
     /**
-     * @private
+     * @const @private
      * @type {number}
      */
     this.port_ = opt_port || 0;
+
+    /**
+     * @const @private
+     * @type {string}
+     */
+    this.path_ = opt_path || "";
     
   }
 
@@ -47,6 +53,13 @@ class Options {
    */
   getPort() {
     return this.port_;
+  }
+
+  /**
+   * @return {string}
+   */
+  getPath() {
+    return this.path_;
   }
   
   /**

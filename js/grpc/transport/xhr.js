@@ -22,7 +22,7 @@ class Xhr {
    * @param {!grpc.Options} options
    */  
   constructor(options) {
-    /** @private @type{!grpc.Options} */
+    /** @const @private @type{!grpc.Options} */
     this.options_ = options;
   }
   

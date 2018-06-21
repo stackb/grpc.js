@@ -1,3 +1,5 @@
+workspace(name = "com_github_stackb_grpc_js")
+
 # ================================================================
 
 JSPB_BUILD = """
@@ -25,18 +27,19 @@ filegroup(
 new_http_archive(
     name = "com_google_protobuf_js",
     urls = [
-        "https://github.com/google/protobuf/archive/v3.5.1.zip",  # 2017-07-17
+        "https://github.com/google/protobuf/archive/v3.5.1.tar.gz",  # 2017-07-17
     ],
-    sha256 = "1f8b9b202e9a4e467ff0b0f25facb1642727cdf5e69092038f15b37c75b99e45",
+    sha256 = "826425182ee43990731217b917c5c3ea7190cfda141af4869e6d4ad9085a740f",
     strip_prefix = "protobuf-3.5.1/js",
     build_file_content = JSPB_BUILD,
 )
 
+RULES_CLOSURE_VERSION = "f4d0633f14570313b94822223039ebda0f398102"
+
 http_archive(
     name = "io_bazel_rules_closure",
-    url = "https://github.com/bazelbuild/rules_closure/archive/4af89ef1db659eb41f110df189b67d4cf14073e1.zip",
-    sha256 = "f73b1b3974e7639183e1646737d446d73a966ff57f853a896e19bcccc40e9b7b",
-    strip_prefix = "rules_closure-4af89ef1db659eb41f110df189b67d4cf14073e1",
+    url = "https://github.com/bazelbuild/rules_closure/archive/%s.zip" % RULES_CLOSURE_VERSION,
+    strip_prefix = "rules_closure-%s" % RULES_CLOSURE_VERSION,
 )
 
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
@@ -47,14 +50,27 @@ closure_repositories(
 
 # ================================================================
 
-http_archive(
-    name = "io_bazel_rules_go",
-    url = "https://github.com/bazelbuild/rules_go/releases/download/0.5.5/rules_go-0.5.5.tar.gz",
-    sha256 = "ca58b0b856dc95473b93f2228ab117913b82a6617fc0deabd107346e3981522a",
-)
-load("@io_bazel_rules_go//go:def.bzl", "go_repositories", "go_repository")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
-go_repositories()
+git_repository(
+    name = "io_bazel_rules_go",
+    remote = "https://github.com/bazelbuild/rules_go.git",
+    commit = "d850f8bbd15d94ce11a078b3933e92ebbf09f715",
+)
+
+http_archive(
+    name = "bazel_gazelle",
+    urls = ["https://github.com/bazelbuild/bazel-gazelle/releases/download/0.12.0/bazel-gazelle-0.12.0.tar.gz"],
+    sha256 = "ddedc7aaeb61f2654d7d7d4fd7940052ea992ccdb031b8f9797ed143ac7e8d43",
+)
+
+load("@io_bazel_rules_go//go:def.bzl", "go_rules_dependencies", "go_register_toolchains")
+go_rules_dependencies()
+go_register_toolchains()
+
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
+gazelle_dependencies()
 
 go_repository(
     name = "com_github_improbable_eng_grpc_web",

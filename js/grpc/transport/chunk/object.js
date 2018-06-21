@@ -15,13 +15,14 @@ class Chunk {
   constructor(data, trailers) {
 
     /**
+     * @const
      * @private
      * @type {?Uint8Array}
      */
     this.data_ = data;
 
     /**
-     * @private
+     * @const @private
      * @type {?Object<string,string>}
      */
     this.trailers_ = trailers;

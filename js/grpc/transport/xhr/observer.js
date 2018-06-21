@@ -7,13 +7,16 @@ goog.module('grpc.transport.xhr.Observer');
 const Chunk = goog.require('grpc.chunk.Parser');
 const Endpoint = goog.require('grpc.Endpoint');
 const EventHandler = goog.require('goog.events.EventHandler');
+const GrpcOptions = goog.require('grpc.Options');
 const GrpcStatus = goog.require('grpc.Status');
+const GrpcStreamRejection = goog.require('grpc.stream.Rejection');
 const HttpStatus = goog.require('goog.net.HttpStatus');
 const JspbByteSource = goog.require('jspb.ByteSource');
 const NetEventType = goog.require('goog.net.EventType');
 const ReadyState = goog.require('goog.net.XmlHttp.ReadyState');
 const StreamObserver = goog.require('grpc.stream.Observer');
 const asserts = goog.require('goog.asserts');
+const objects = goog.require('goog.object');
 
 /**
  * Observer implementation that uses an XmlHttpRequest.
@@ -25,7 +28,7 @@ class Observer {
 
   /**
    * @param {!grpc.transport.Xhr} xhrTransport
-   * @param {!grpc.Options} options
+   * @param {!GrpcOptions} options
    * @param {string} name
    * @param {!function(T):!JspbByteSource} encoder A serializer function that can encode input messages.
    * @param {!function(!JspbByteSource):T} decoder A serializer function that can decode output messages.
@@ -34,31 +37,34 @@ class Observer {
    */
   constructor(xhrTransport, options, name, encoder, decoder, observer, opt_endpoint) {
 
+    // console.log('grpc options: ', options);
+    // console.log('opt_endpoint: ', opt_endpoint);
+    
     /**
      * Instance of the xhrTransport.
-     * @private @type {!grpc.transport.Xhr}
+     * @const @private @type {!grpc.transport.Xhr}
      */
     this.xhrTransport_ = xhrTransport;
 
-    /** @private @type{!grpc.Options} */
+    /** @const @private @type{!GrpcOptions} */
     this.options_ = options;
     
-    /** @private @type {string} */
+    /** @const @private @type {string} */
     this.name_ = name;
 
-    /** @private @type {!function(T):!JspbByteSource} */
+    /** @const @private @type {!function(T):!JspbByteSource} */
     this.encoder_ = encoder;
 
-    /** @private @type {!function(!JspbByteSource):T} */
+    /** @const @private @type {!function(!JspbByteSource):T} */
     this.decoder_ = decoder;
 
-    /** @private @type {!StreamObserver<T>} */
+    /** @const @private @type {!StreamObserver<T>} */
     this.observer_ = observer;
 
-     /** @private @type {Endpoint|undefined|null} */
+     /** @const @private @type {Endpoint|undefined|null} */
     this.endpoint_ = opt_endpoint;
 
-    /** @private @type {!EventHandler} */
+    /** @const @private @type {!EventHandler} */
     this.handler_ = new EventHandler(this);
 
     /**
@@ -99,7 +105,7 @@ class Observer {
     /**
      * The chunk parser used for this call.  It is stateful, so we use
      * one per request.
-     *
+     * @const
      * @private
      * @type {!Chunk.Parser}
      */
@@ -153,8 +159,8 @@ class Observer {
   /**
    * @override
    */
-  onError(message, status) {
-    if (this.status_ != GrpcStatus.INTERNAL) {
+  onError(err) {
+    if (err.status != GrpcStatus.INTERNAL) {
       this.setStatus(GrpcStatus.FAILED_PRECONDITION);
       this.reportError('No more input is possible, observer has already completed with status code: ' + this.status_);
       return;
@@ -167,7 +173,7 @@ class Observer {
     // arbitrary.
     //
     this.setStatus(GrpcStatus.INVALID_ARGUMENT);
-    this.reportError('Client terminated request prior to sending the request: ' + message);
+    this.reportError('Client terminated request prior to sending the request: ' + err.message);
     return;
   }
 
@@ -187,7 +193,7 @@ class Observer {
     // Demarcates that the request has committed.
     this.setStatus(GrpcStatus.UNKNOWN);
 
-    // Get an xhr
+   // Get an xhr
     const xhr = this.xhr_ = this.xhrTransport_.createObject();
 
     xhr.open("POST", this.getEndpointUrl());
@@ -212,7 +218,7 @@ class Observer {
     
     // Headers for this call
     if (this.headers_) {
-      this.headers_.forEach((val, key) => {
+      objects.forEach(this.headers_, (val, key) => {
         xhr.setRequestHeader(key, val);
       });
     }
@@ -239,14 +245,20 @@ class Observer {
    */
   getEndpointUrl() {
     let url = "";
-    if (this.endpoint_) {
-      url += this.endpoint_.host || "";
-      if (this.endpoint_.port) {
-        url += ':' + this.endpoint_.port;
-      }
-      if (this.endpoint_.path) {
-        url += '/' + this.endpoint_.path;
-      }
+    if (this.endpoint_ && this.endpoint_.host) {
+      url += this.endpoint_.host;
+    } else if (this.options_.getHost()) {
+      url += this.options_.getHost();
+    }
+    if (this.endpoint_ && this.endpoint_.port) {
+      url += ':' + this.endpoint_.port;
+    } else if (this.options_.getPort()) {
+      url += ':' + this.options_.getPort();
+    }
+    if (this.endpoint_ && this.endpoint_.path) {
+      url += '/' + this.endpoint_.path;
+    } else if (this.options_.getPath()) {
+      url += '/' + this.options_.getPath();
     }
     url += '/' + this.name_;
     return url;
@@ -259,7 +271,7 @@ class Observer {
    * @param {!Object<string,string>=} opt_headers Optional headers associated with the error.
    */
   reportError(message, opt_headers) {
-    this.observer_.onError(message, this.status_);
+    this.observer_.onError(new GrpcStreamRejection(message, this.status_, opt_headers || {}, {}));
     this.releaseXhr();
   }
 
@@ -547,7 +559,6 @@ class Observer {
   releaseXhr() {
     if (this.handler_) {
       this.handler_.dispose();
-      delete this.handler_;
     }
     this.xhr_ = null;
   }

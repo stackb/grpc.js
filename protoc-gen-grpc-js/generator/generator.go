@@ -1240,7 +1240,6 @@ func (g *Generator) generateApiModule() {
 func (g *Generator) generateServiceCommonRequires() {
 	hasUnary, hasServerStreaming := g.getServiceMethodArities()
 	g.P()
-	g.P("const CallResolver = goog.require('grpc.stream.observer.CallResolver');")
 	g.P("const GrpcApi = goog.require('grpc.Api');")
 	g.P("const GrpcEndpoint = goog.require('grpc.Endpoint');")
 	g.P("const GrpcOptions = goog.require('grpc.Options');")
@@ -1250,10 +1249,10 @@ func (g *Generator) generateServiceCommonRequires() {
 	g.P("const Observer = goog.require('grpc.stream.Observer');")
 
 	if hasServerStreaming {
-		g.P("const StreamingCallResolver = goog.require('grpc.stream.observer.StreamingCallResolver');")
+		g.P("const StreamingCallObserver = goog.require('grpc.stream.observer.StreamingCallObserver');")
 	}
 	if hasUnary {
-		g.P("const UnaryCallResolver = goog.require('grpc.stream.observer.UnaryCallResolver');")
+		g.P("const UnaryCallObserver = goog.require('grpc.stream.observer.UnaryCallObserver');")
 	}
 }
 
@@ -1375,9 +1374,9 @@ func (g *Generator) generateUnaryMethod(service *ServiceDescriptor, method *desc
 	g.P(" */")
 	g.P(name, "(request, opt_headers, opt_endpoint) {")
 	g.In()
-	g.P("/** @type{!goog.promise.Resolver<!", out, ",!GrpcRejection>} */")
+	g.P("/** @type{!goog.promise.Resolver<!", out, ">} */")
 	g.P("const resolver = GoogPromise.withResolver();")
-	g.P("const observer = new UnaryCallResolver(resolver);")
+	g.P("const observer = new UnaryCallObserver(resolver);")
 	g.P("this.", name, "Observation(observer, request, opt_headers, opt_endpoint);")
 	g.P("return resolver.promise;")
 	g.Out()
@@ -1434,9 +1433,9 @@ func (g *Generator) generateServerStreamingMethod(service *ServiceDescriptor, me
 	g.P(" */")
 	g.P(name, "(request, onMessage, opt_headers, opt_endpoint) {")
 	g.In()
-	g.P("/** @type{!goog.promise.Resolver<void,!GrpcRejection>} */")
+	g.P("/** @type{!goog.promise.Resolver<void>} */")
 	g.P("const resolver = GoogPromise.withResolver();")
-	g.P("const observer = new StreamingCallResolver(resolver, onMessage);")
+	g.P("const observer = new StreamingCallObserver(resolver, onMessage);")
 	g.P("this.", name, "Observation(observer, request, opt_headers, opt_endpoint);")
 	g.P("return resolver.promise;")
 	g.Out()

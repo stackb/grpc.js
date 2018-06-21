@@ -32,11 +32,11 @@ def grpc_js_proto_library(
     "imports": imports,
     "inputs": inputs,
     "output_to_workspace": output_to_workspace,
-    "verbose": verbose,
+    "verbose": verbose, 
   }
 
   proto_compile(**closure_proto_compile_args)
-
+  
   grpc_js_proto_compile_args += {
     "name": name + ".grpc",
     "protos": protos,
@@ -54,10 +54,11 @@ def grpc_js_proto_library(
   all_js_deps = depset(deps + proto_deps + [
       "@io_bazel_rules_closure//closure/library",
       "@io_bazel_rules_closure//closure/protobuf:jspb",
-      "@build_stack_grpc_js//js/grpc/stream:observer",
-      "@build_stack_grpc_js//js/grpc/stream/observer:call",
-      "@build_stack_grpc_js//js/grpc",
-      "@build_stack_grpc_js//js/grpc:api",
+      "@com_github_stackb_grpc_js//js/grpc/stream:observer",
+      "@com_github_stackb_grpc_js//js/grpc/stream/observer:call",
+      "@com_github_stackb_grpc_js//js/grpc",
+      "@com_github_stackb_grpc_js//js/grpc:api",
+      "@com_github_stackb_grpc_js//js/grpc:options",
     ]).to_list()
 
   closure_js_library(

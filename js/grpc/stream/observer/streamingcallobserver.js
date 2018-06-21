@@ -1,6 +1,6 @@
-goog.module('grpc.stream.observer.StreamingCallResolver');
+goog.module('grpc.stream.observer.StreamingCallObserver');
 
-const UnaryCallResolver = goog.require('grpc.stream.observer.UnaryCallResolver');
+const UnaryCallObserver = goog.require('grpc.stream.observer.UnaryCallObserver');
 
 
 /**
@@ -8,13 +8,13 @@ const UnaryCallResolver = goog.require('grpc.stream.observer.UnaryCallResolver')
  * resolves to void but propagates protobuf messages to the onMessage
  * constructor argument.
  *
- * @extends {UnaryCallResolver<T>}
+ * @extends {UnaryCallObserver<T>}
  * @template T
  */
-class StreamingCallResolver extends UnaryCallResolver {
+class StreamingCallObserver extends UnaryCallObserver {
 
   /**
-   * @param {!goog.promise.Resolver} resolver
+   * @param {!goog.promise.Resolver<?>} resolver
    * @param {!function(T)} onMessage
    */
   constructor(resolver, onMessage) {
@@ -44,4 +44,4 @@ class StreamingCallResolver extends UnaryCallResolver {
   
 }
 
-exports = StreamingCallResolver;
+exports = StreamingCallObserver;

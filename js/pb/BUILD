@@ -26,6 +26,7 @@ closure_js_library(
         "JSC_NULLABLE_RETURN_WITH_NAME",
         "JSC_OPTIONAL_PARAM_NOT_MARKED_OPTIONAL",
         "JSC_UNKNOWN_EXPR_TYPE",
+        "JSC_PREFER_BACKTICKS_TO_AT_SIGN_CODE",
     ],
     deps = ["@io_bazel_rules_closure//closure/library"],
     visibility = ["//visibility:public"],

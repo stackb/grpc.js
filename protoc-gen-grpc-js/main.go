@@ -7,8 +7,9 @@ package main
 import (
 	"io/ioutil"
 	"os"
+
 	"github.com/golang/protobuf/proto"
-	"github.com/pubref/grpc.js/protoc-gen-grpc-js/generator"
+	"github.com/stackb/grpc.js/protoc-gen-grpc-js/generator"
 )
 
 func main() {

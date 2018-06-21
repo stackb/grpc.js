@@ -1,6 +1,7 @@
 goog.module('grpc.transport.xhr.ObserverTest');
 goog.setTestOnly('grpc.transport.xhr.ObserverTest');
 
+const GrpcOptions = goog.require('grpc.Options');
 const GrpcStatus = goog.require('grpc.Status');
 const JspbBinaryReader = goog.require('jspb.BinaryReader');
 const JspbBinaryWriter = goog.require('jspb.BinaryWriter');
@@ -30,9 +31,11 @@ testSuite({
     const mockXhrIoPool = new MockXhrIoPool(xhr);
     const mockObserver = new MockObserver();
     const mockMessage = new MockProtocolBuffer();
+    const options = new GrpcOptions();
 
     const stream = new XhrObserver(
       mockXhrIoPool,
+      options,
       'mockService.getFoo',
       mockEncoder,
       mockDecoder,
@@ -390,10 +393,9 @@ class MockObserver {
   }
 
   /** @override */
-  onError(message, status) {
+  onError(message) {
     this.errorStack.push({
       message: message,
-      status: status
     });
     return this;
   }

@@ -1,6 +1,5 @@
 package(default_visibility = ["//visibility:public"])
 
-
 load(
     "@io_bazel_rules_closure//closure:defs.bzl",
     "closure_js_library",
@@ -27,12 +26,24 @@ closure_js_library(
     name = "api",
     srcs = [
         "api.js",
-        "options.js",
     ],
     deps = [
         ":grpc",
+        ":options",
         "//js/grpc/transport:xhr",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
+
+closure_js_library(
+    name = "options",
+    srcs = [
+        "options.js",
+    ],
+    deps = [
+        ":grpc",
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+
 

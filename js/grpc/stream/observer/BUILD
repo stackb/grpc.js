@@ -9,9 +9,8 @@ closure_js_library(
     name = "call",
     srcs = [
         "eventtype.js",
-        "callresolver.js",
-        "unarycallresolver.js",
-        "streamingcallresolver.js",
+        "unarycallobserver.js",
+        "streamingcallobserver.js",
     ],
     suppress = [
         "JSC_UNKNOWN_EXPR_TYPE",

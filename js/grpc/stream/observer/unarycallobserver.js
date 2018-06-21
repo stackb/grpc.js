@@ -1,9 +1,9 @@
-goog.module('grpc.stream.observer.UnaryCallResolver');
+goog.module('grpc.stream.observer.UnaryCallObserver');
 
-const CallResolver = goog.require('grpc.stream.observer.CallResolver');
 const EventTarget = goog.require('goog.events.EventTarget');
 const EventType = goog.require('grpc.stream.observer.EventType');
 const GrpcStatus = goog.require('grpc.Status');
+const Observer = goog.require('grpc.stream.Observer');
 
 
 /**
@@ -13,10 +13,10 @@ const GrpcStatus = goog.require('grpc.Status');
  * the first message.
  *
  * @extends {EventTarget}
- * @implements {CallResolver<T>}
+ * @implements {Observer<T>}
  * @template T
  */
-class UnaryCallResolver extends EventTarget {
+class UnaryCallObserver extends EventTarget {
 
   /**
    * @param {!goog.promise.Resolver<T>} resolver
@@ -84,9 +84,9 @@ class UnaryCallResolver extends EventTarget {
    * @param {boolean=} opt_isTrailing Flag set if these are Trailers
    */
   onProgress(headers, status, opt_isTrailing) {
-    console.warn("onProgress: ", status + " HEADERS: " + opt_isTrailing, headers);
+    //console.warn("onProgress: ", status + " HEADERS: " + opt_isTrailing, headers);
     const grpcStatus = this.getGrpcStatus(headers);
-    console.warn("onProgress grpcStatus: ", grpcStatus);
+    //console.warn("onProgress grpcStatus: ", grpcStatus);
     if (goog.isDefAndNotNull(grpcStatus)) {
       this.status_ = grpcStatus;
     }
@@ -113,7 +113,7 @@ class UnaryCallResolver extends EventTarget {
    * @override
    */
   onNext(value) {
-    console.log("onNext", this);
+    //console.log("onNext", this);
     if (!this.resolver) {
       throw new Error("Illegal state (onNext called after procedure completed)");
     }
@@ -125,13 +125,13 @@ class UnaryCallResolver extends EventTarget {
   /**
    * @override
    */
-  onError(message, status) {
-    console.log("onError", this);
+  onError(err) {
+    //console.log("onError", this);
     if (!this.resolver) {
       throw new Error("Illegal state (onError called after procedure completed)");
     }
-    this.message_ = message;
-    this.status_ = status;
+    this.message_ = err.message;
+    this.status_ = err.status;
     if (this.hasListener(EventType.ERROR)) {
       this.dispatchEvent(EventType.ERROR);
     }    
@@ -144,7 +144,7 @@ class UnaryCallResolver extends EventTarget {
    * @override
    */
   onCompleted() {
-    console.log("onCompleted", this);
+    //console.log("onCompleted", this);
     if (!this.resolver) {
       throw new Error("Illegal state (onCompleted called more than once)");
     }
@@ -201,4 +201,4 @@ class UnaryCallResolver extends EventTarget {
 
 }
 
-exports = UnaryCallResolver;
+exports = UnaryCallObserver;
