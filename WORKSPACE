@@ -1,38 +1,9 @@
 workspace(name = "com_github_stackb_grpc_js")
 
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
 # ================================================================
-
-JSPB_BUILD = """
-package(default_visibility = ["//visibility:public"])
-
-licenses(["notice"])  # BSD
-
-filegroup(
-    name = "proto_js_library_files",
-    srcs = [
-        "binary/arith.js",
-        "binary/constants.js",
-        "binary/decoder.js",
-        "binary/encoder.js",
-        "binary/reader.js",
-        "binary/utils.js",
-        "binary/writer.js",
-        "debug.js",
-        "map.js",
-        "message.js",
-    ],
-)
-"""
-
-new_http_archive(
-    name = "com_google_protobuf_js",
-    urls = [
-        "https://github.com/google/protobuf/archive/v3.5.1.tar.gz",  # 2017-07-17
-    ],
-    sha256 = "826425182ee43990731217b917c5c3ea7190cfda141af4869e6d4ad9085a740f",
-    strip_prefix = "protobuf-3.5.1/js",
-    build_file_content = JSPB_BUILD,
-)
 
 RULES_CLOSURE_VERSION = "f4d0633f14570313b94822223039ebda0f398102"
 
@@ -44,14 +15,9 @@ http_archive(
 
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
 
-closure_repositories(
-    omit_com_google_protobuf_js = True,
-)
+closure_repositories()
 
 # ================================================================
-
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 git_repository(
     name = "io_bazel_rules_go",
@@ -104,25 +70,17 @@ go_repository(
 
 # ================================================================
 
-local_repository(
+git_repository(
     name = "org_pubref_rules_protobuf",
-    path = "/home/pcj/github/pubref/rules_protobuf",
+    remote = "https://github.com/pubref/rules_protobuf.git",
+    commit = "a807fe6f64022685c410f357e426d5b068ac6e48",
 )
-
-# http_archive(
-#     name = "org_pubref_rules_protobuf",
-#     url = "https://github.com/pubref/rules_protobuf/archive/0ce5738cd67925351c44df0845c3bbf9d1d32663.zip",
-#     strip_prefix = "rules_protobuf-0ce5738cd67925351c44df0845c3bbf9d1d32663",
-#     #sha256 = "72bbb8fd2e47ab4ca2cc6ef46ab062e989e4144b01d209b6ed4257ddfa95a93f",
-# )
-
 
 load("@org_pubref_rules_protobuf//closure:rules.bzl", "closure_proto_repositories")
 closure_proto_repositories()
 
 load("@org_pubref_rules_protobuf//go:rules.bzl", "go_proto_repositories")
 go_proto_repositories()
-
 
 # ================================================================
 
