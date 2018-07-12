@@ -16,7 +16,7 @@ class Options {
   constructor(opt_per_rpc_metadata, opt_host, opt_port, opt_path) {
 
     /**
-     * @const @private
+     * @private
      * @type {function(string):?Map<string,string>}
      */
     this.per_rpc_metadata_ = opt_per_rpc_metadata || function(endpoint) { return null; };
@@ -67,6 +67,13 @@ class Options {
    */
   getPerRpcMetadata() {
     return this.per_rpc_metadata_;
+  }
+
+  /**
+   * @param {function(string):?Map<string,string>} per_rpc_metadata
+   */
+  setPerRpcMetadata(per_rpc_metadata) {
+    this.per_rpc_metadata_ = per_rpc_metadata;
   }
   
 }
