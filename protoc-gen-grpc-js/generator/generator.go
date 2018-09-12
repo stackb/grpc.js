@@ -1,4 +1,3 @@
-
 /*
 	The code generator for the plugin for the Google protocol buffer compiler.
 	It generates Go code from the protocol buffer description files read by the
@@ -12,13 +11,14 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"unicode"
 	"unicode/utf8"
-	"path/filepath"
+
 	"github.com/golang/protobuf/proto"
-	
+
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	plugin "github.com/golang/protobuf/protoc-gen-go/plugin"
 )
@@ -124,9 +124,9 @@ type EnumDescriptor struct {
 type ServiceDescriptor struct {
 	common
 	*descriptor.ServiceDescriptorProto
-	typename []string    // Cached typename vector.
-	index    int         // The index into the container, whether the file or a message.
-	path     string      // The SourceCodeInfo path as comma-separated integers.
+	typename []string // Cached typename vector.
+	index    int      // The index into the container, whether the file or a message.
+	path     string   // The SourceCodeInfo path as comma-separated integers.
 }
 
 // TypeName returns the elements of the dotted type name.
@@ -288,7 +288,6 @@ func (d *FileDescriptor) goPackageName() (name string, explicit bool) {
 	// Use the file base name.
 	return baseName(d.GetName()), false
 }
-
 
 // goPackageName returns the Go package name to use in the
 // generated Go file.  The result explicit reports whether the name
@@ -812,10 +811,10 @@ func newEnumDescriptor(desc *descriptor.EnumDescriptorProto, parent *Descriptor,
 // Construct the ServiceDescriptor
 func newServiceDescriptor(desc *descriptor.ServiceDescriptorProto, file *descriptor.FileDescriptorProto, index int) *ServiceDescriptor {
 	sd := &ServiceDescriptor{
-		common:              common{file},
+		common:                 common{file},
 		ServiceDescriptorProto: desc,
-		index:               index,
-		path: fmt.Sprintf("%d,%d", servicePath, index),
+		index: index,
+		path:  fmt.Sprintf("%d,%d", servicePath, index),
 	}
 	return sd
 }
@@ -1070,7 +1069,7 @@ func (g *Generator) generate(file *FileDescriptor) {
 		methods := service.Method
 		for _, method := range methods {
 			if method.GetClientStreaming() {
-				g.Warn("Not implemented (ClientStreaming)");
+				g.Warn("Not implemented (ClientStreaming)")
 			} else {
 				if method.GetServerStreaming() {
 					g.generateServerStreamingMethod(service, method)
@@ -1087,15 +1086,15 @@ func (g *Generator) generate(file *FileDescriptor) {
 
 	g.generateApiClass()
 	g.generateApiConstructor()
-	
+
 	for _, service := range g.file.service {
 		g.generateApiServiceGetter(service)
 	}
 	g.Out()
 	g.P("}")
 	g.P("")
-	g.P("exports = Api;");
-	
+	g.P("exports = Api;")
+
 }
 
 // PrintComments prints any comments from the source .proto file.
@@ -1247,6 +1246,7 @@ func (g *Generator) generateServiceCommonRequires() {
 	g.P("const GrpcStatus = goog.require('grpc.Status');")
 	g.P("const GoogPromise = goog.require('goog.Promise');")
 	g.P("const Observer = goog.require('grpc.stream.Observer');")
+	g.P("const Transport = goog.require('grpc.Transport');")
 
 	if hasServerStreaming {
 		g.P("const StreamingCallObserver = goog.require('grpc.stream.observer.StreamingCallObserver');")
@@ -1274,9 +1274,9 @@ func (g *Generator) getAllMessageTypeNames() map[string]bool {
 // Return a pair of boolean values that say whether the services
 // include at least one unary method and at least one server streaming
 // method.
-func (g *Generator) getServiceMethodArities() (bool,bool) {
+func (g *Generator) getServiceMethodArities() (bool, bool) {
 	hasUnary := false
-	hasServerStreaming := false	
+	hasServerStreaming := false
 	for _, service := range g.file.service {
 		for _, method := range service.Method {
 			if method.GetClientStreaming() {
@@ -1335,8 +1335,8 @@ func (g *Generator) generateUnaryMethod(service *ServiceDescriptor, method *desc
 	//pkg := g.packageName
 	pkg, _ := g.genFiles[0].goPackageName()
 	name := lowerFirst(*method.Name)
-	in := toJsVariableProtoName(*method.InputType);
-	out := toJsVariableProtoName(*method.OutputType);
+	in := toJsVariableProtoName(*method.InputType)
+	out := toJsVariableProtoName(*method.OutputType)
 
 	g.P("")
 	g.P("/**")
@@ -1383,7 +1383,6 @@ func (g *Generator) generateUnaryMethod(service *ServiceDescriptor, method *desc
 	g.P("}")
 }
 
-
 // Generate method for streaming server service.
 func (g *Generator) generateServerStreamingMethod(service *ServiceDescriptor, method *descriptor.MethodDescriptorProto) {
 	//pkg := service.PackageName()
@@ -1392,8 +1391,8 @@ func (g *Generator) generateServerStreamingMethod(service *ServiceDescriptor, me
 	//spew.Dump(pkg)
 	//spew.Dump(g)
 	name := lowerFirst(*method.Name)
-	in := toJsVariableProtoName(*method.InputType);
-	out := toJsVariableProtoName(*method.OutputType);
+	in := toJsVariableProtoName(*method.InputType)
+	out := toJsVariableProtoName(*method.OutputType)
 
 	g.P("")
 	g.P("/**")
@@ -1420,7 +1419,6 @@ func (g *Generator) generateServerStreamingMethod(service *ServiceDescriptor, me
 	g.Out()
 	g.P("}")
 
-
 	g.P("")
 	g.P("/**")
 	g.P(" * ", service.Name, ".", method.Name, " method (as a promise).")
@@ -1442,7 +1440,6 @@ func (g *Generator) generateServerStreamingMethod(service *ServiceDescriptor, me
 	g.P("}")
 }
 
-
 // Generate the type and default constant definitions for this Descriptor.
 func (g *Generator) generateApiClass() {
 	name := g.file.Name
@@ -1460,11 +1457,12 @@ func (g *Generator) generateApiClass() {
 func (g *Generator) generateApiConstructor() {
 	g.P("")
 	g.P("/**")
-	g.P(" * @param {?GrpcOptions=} options")
+	g.P(" * @param {?GrpcOptions=} opt_options")
+	g.P(" * @param {?Transport=} opt_transport")
 	g.P(" */")
-	g.P("constructor(options) {")
+	g.P("constructor(opt_options, opt_transport) {")
 	g.In()
-	g.P("super(options);")
+	g.P("super(opt_options, opt_transport);")
 	for _, service := range g.file.service {
 		g.P("/** @private @type {!", service.Name, "} */")
 		g.P("this.", strings.ToLower(*service.Name), "_ = new ", service.Name, "(this);")
