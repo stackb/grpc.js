@@ -1,27 +1,11 @@
 package(default_visibility = ["//visibility:public"])
 
-load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
-
-go_library(
-    name = "generator",
-    srcs = [
-        "generator/generator.go",
-    ],
-    deps = [
-        "@com_github_golang_protobuf//proto:go_default_library",
-        "@com_github_golang_protobuf//protoc-gen-go/descriptor:go_default_library",
-        "@com_github_golang_protobuf//protoc-gen-go/plugin:go_default_library",
-    ],
-    importpath = "github.com/stackb/grpc.js/protoc-gen-grpc-js/generator",
-)
-
-go_binary(
+cc_binary(
     name = "protoc-gen-grpc-js",
     srcs = [
-        "main.go",
+        "protoc-gen-grpc-js.cc",
     ],
     deps = [
-        ":generator",
-        "@com_github_golang_protobuf//proto:go_default_library",
+        "@com_google_protobuf//:protoc_lib"
     ],
 )
