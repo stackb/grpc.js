@@ -6,7 +6,7 @@ goog.module('grpc.chunk.Parser');
 
 const Chunk = goog.require('grpc.chunk.Object');
 const crypt = goog.require('goog.crypt');
-const gString = goog.require('goog.string'); // best require ever
+const strings = goog.require('goog.string'); 
 
 const HEADER_SIZE = 5;
 
@@ -175,10 +175,10 @@ function parseHeaders(raw) {
   }
   const list = raw.split('\r\n');
   for (var i = 0; i < list.length; i++) {
-    if (gString.isEmptyOrWhitespace(list[i])) {
+    if (strings.isEmptyOrWhitespace(list[i])) {
       continue;
     }
-    var keyValue = gString.splitLimit(list[i], ': ', 1);
+    var keyValue = strings.splitLimit(list[i], ': ', 1);
     if (headers[keyValue[0]]) {
       headers[keyValue[0]] += ', ' + keyValue[1];
     } else {

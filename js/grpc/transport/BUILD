@@ -42,6 +42,45 @@ closure_js_library(
     ],
 )
 
+closure_js_library(
+    name = "base_observer",
+    srcs = [
+        "base_observer.js",
+    ],
+    # suppress = [
+    #     "reportUnknownTypes",
+    # ],
+    deps = [
+        "//js/grpc/stream:observer",
+        "//js/grpc",
+        "//js/grpc:options",
+        "//js/grpc/transport/chunk",
+        "@io_bazel_rules_closure//closure/library",
+        "//js/pb",
+    ],
+)
+
+closure_js_library(
+    name = "fetch",
+    srcs = [
+        "fetch.js",
+        "fetch/observer.js",
+    ],
+    # suppress = [
+    #     "reportUnknownTypes",
+    # ],
+    deps = [
+        ":base_observer",
+        "//js/grpc/stream:observer",
+        "//js/grpc",
+        "//js/grpc:options",
+        "//js/grpc/transport/chunk",
+        "@io_bazel_rules_closure//closure/library",
+        "//js/pb",
+    ],
+)
+
+
 closure_js_test(
     name = "xhr_test",
     srcs = [

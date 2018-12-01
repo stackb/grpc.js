@@ -5,7 +5,7 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 # ================================================================
 
-RULES_CLOSURE_VERSION = "f4d0633f14570313b94822223039ebda0f398102"
+RULES_CLOSURE_VERSION = "7448ab3b1f53db99419a2b1a1b84f9ba2d79ec03"
 
 http_archive(
     name = "io_bazel_rules_closure",

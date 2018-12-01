@@ -1,8 +1,10 @@
 goog.module('grpc.Api');
 
+const FetchTransport = goog.require('grpc.transport.Fetch');
 const GrpcOptions = goog.require('grpc.Options');
 const Transport = goog.require('grpc.Transport');
 const XhrTransport = goog.require('grpc.transport.Xhr');
+const browser = goog.require('goog.labs.userAgent.browser');
 
 
 /**
@@ -17,12 +19,14 @@ class Api {
    */
   constructor(opt_options, opt_transport) {
 
+    const options = opt_options || new GrpcOptions();
+
     /**
      * @const @private
      * @type {!Transport}
      */
-    this.transport_ = opt_transport || new XhrTransport(opt_options || new GrpcOptions());
-
+    this.transport_ = opt_transport || (
+      fetchSupported() ? new FetchTransport(options) : new XhrTransport(options));
   }
 
   /**
@@ -33,5 +37,14 @@ class Api {
   }
   
 }
+
+/**
+* Check if browser supports fetch API.
+* @return {boolean}
+*/
+function fetchSupported() {
+ return browser.isChrome();
+}
+
 
 exports = Api;

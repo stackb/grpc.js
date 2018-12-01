@@ -3,8 +3,7 @@ goog.module('grpc.chunk.Object');
 const asserts = goog.require('goog.asserts');
 
 /**
- * Parser implementation that converts a raw buffer into a list of
- * chunks.
+ * Chunk holds a data array and possibly trailers.
  */
 class Chunk {
 

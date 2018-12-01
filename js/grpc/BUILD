@@ -19,6 +19,8 @@ closure_js_library(
         "//js/grpc/stream:observer",
         "@io_bazel_rules_closure//closure/library",
         "//js/pb",
+        # "//js/google/protobuf:any",
+        # "//js/google/rpc:status",
     ],
 )
 
@@ -31,7 +33,9 @@ closure_js_library(
         ":grpc",
         ":options",
         "//js/grpc/transport:xhr",
+        "//js/grpc/transport:fetch",
         "@io_bazel_rules_closure//closure/library",
+        "@io_bazel_rules_closure//closure/library/labs/useragent:browser",
     ],
 )
 
@@ -45,5 +49,3 @@ closure_js_library(
         "@io_bazel_rules_closure//closure/library",
     ],
 )
-
-
