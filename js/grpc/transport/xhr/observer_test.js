@@ -9,11 +9,9 @@ const JspbByteSource = goog.require('jspb.ByteSource');
 const JspbMessage = goog.require('jspb.Message');
 const StreamObserver = goog.require('grpc.stream.Observer');
 const TestXhrIo = goog.require('goog.testing.net.XhrIo');
-const XhrIo = goog.require('goog.net.XhrIo');
-const XhrIoPool = goog.require('goog.net.XhrIoPool');
+const Xhr = goog.require('grpc.transport.Xhr');
 const XhrObserver = goog.require('grpc.transport.xhr.Observer');
 const arrays = goog.require('goog.array');
-//const base64 = goog.require('goog.crypt.base64');
 const crypt = goog.require('goog.crypt');
 const jsunit = goog.require('goog.testing.jsunit');
 const objects = goog.require('goog.object');
@@ -27,14 +25,14 @@ testSuite({
   
   testEmpty: () => {
 
+    const options = new GrpcOptions();
     const xhr = new MockXhrIo();
-    const mockXhrIoPool = new MockXhrIoPool(xhr);
+    const mockXhrTransport = new MockXhr(options, xhr);
     const mockObserver = new MockObserver();
     const mockMessage = new MockProtocolBuffer();
-    const options = new GrpcOptions();
 
     const stream = new XhrObserver(
-      mockXhrIoPool,
+      mockXhrTransport,
       options,
       'mockService.getFoo',
       mockEncoder,
@@ -247,6 +245,14 @@ class MockProtocolBuffer extends JspbMessage {
 class MockXhrIo extends TestXhrIo {
 
   /**
+   * 
+   * @return {!XMLHttpRequest}  
+   */
+  createXMLHttpRequest() {
+    return /** @type {!XMLHttpRequest} */(super.createXhr());
+  }
+
+  /**
    * Convert the raw string to an ArrayBuffer
    * @param {!Uint8Array} buffer
    * @return {string} 
@@ -327,16 +333,17 @@ class MockXhrIo extends TestXhrIo {
 }
 
 /**
- * Mock XhrIoPool that returns our MockXhr implementation.  Should
+ * Mock Xhr that returns our MockXhr implementation.  Should
  * only be called once.
  */
-class MockXhrIoPool extends XhrIoPool {
+class MockXhr extends Xhr {
 
   /** 
+   * @param {!GrpcOptions} options
    * @param {!MockXhrIo} xhr
    */
-  constructor(xhr) {
-    super();
+  constructor(options, xhr) {
+    super(options);
 
     /** @public @type {!MockXhrIo} */
     this.xhr = xhr;
@@ -351,7 +358,7 @@ class MockXhrIoPool extends XhrIoPool {
    * @override
    */
   createObject() {
-    return /** @type {!XhrIo} */ (this.xhr);
+    return this.xhr.createXMLHttpRequest();
   }
 
 }
@@ -373,7 +380,7 @@ class MockObserver {
     /** @public @type {!Array<!Object>} */
     this.messageStack = [];
 
-    /** @public @type {!Array<{message:string,status:GrpcStatus}>} */
+    /** @public @type {!Array<!grpc.stream.Rejection>} */
     this.errorStack = [];
 
     /** @public @type {number}} */
@@ -389,15 +396,11 @@ class MockObserver {
       status: status,
       isTrailer: isTrailer
     });
-    return this;
   }
 
   /** @override */
-  onError(message) {
-    this.errorStack.push({
-      message: message,
-    });
-    return this;
+  onError(rejection) {
+    this.errorStack.push(rejection);
   }
 
   /** 
@@ -406,13 +409,11 @@ class MockObserver {
    */
   onNext(value) {
     this.messageStack.push(value);
-    return this;
   }
 
   /** @override */
   onCompleted() {
     this.isCompleted++;
-    return this;
   }
 
 }
