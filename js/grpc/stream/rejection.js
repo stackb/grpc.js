@@ -15,22 +15,22 @@ class Rejection {
   constructor(message, status, headers, trailers) {
 
     /**
-     * @public @type {string}
+     * @public @const @type {string}
      */
     this.message = message;
 
     /**
-     * @public @type {grpc.Status}
+     * @public @const @type {grpc.Status}
      */
     this.status = status;
 
     /**
-     * @public @type {!Object<string,string>}
+     * @public @const @type {!Object<string,string>}
      */
     this.headers = headers;
 
     /**
-     * @public @type {!Object<string,string>}
+     * @public @const @type {!Object<string,string>}
      */
     this.trailers = trailers;
 
