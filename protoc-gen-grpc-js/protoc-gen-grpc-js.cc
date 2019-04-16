@@ -220,6 +220,7 @@ void PrintFileHeader(Printer *printer, const std::map<string, string> &vars)
         " * @fileoverview gRPC.js generated client stub for $package$\n"
         " * @enhanceable\n"
         " * @public\n"
+        " * @suppress {extraRequire}\n"
         " */\n\n"
         "// GENERATED CODE -- DO NOT EDIT!\n\n\n");
 }
@@ -244,7 +245,7 @@ void PrintServiceConstructor(Printer *printer,
         " * @param {!GrpcApi} api\n"
         " */\n"
         "constructor(api) {\n"
-        "  /** @type {!GrpcApi} */\n"
+        "  /** @private @const @type {!GrpcApi} */\n"
         "  this.api_ = api;\n"
         "}\n\n");
 }
@@ -260,6 +261,7 @@ void PrintUnaryCall(Printer *printer, std::map<string, string> vars)
         " * @param {!$in$} request\n"
         " * @param {?Object<string,string>=} opt_headers\n"
         " * @param {?GrpcEndpoint=} opt_endpoint\n"
+        " * @suppress {reportUnknownTypes}\n"
         " */\n"
         " $js_method_name$Observation(observer, request, opt_headers, opt_endpoint) {\n");
     printer->Indent();
@@ -317,7 +319,8 @@ void PrintServerStreamingCall(Printer *printer, std::map<string, string> vars)
         " * @param {!Observer<!$out$>} observer\n"
         " * @param {!$in$} request\n"
         " * @param {?Object<string,string>=} opt_headers\n"
-        " * @param {?grpc.Endpoint=} opt_endpoint\n"
+        " * @param {?GrpcEndpoint=} opt_endpoint\n"
+        " * @suppress {reportUnknownTypes}\n"
         " */\n"
         "$js_method_name$Observation(observer, request, opt_headers, opt_endpoint) {\n");
     printer->Indent();
@@ -512,7 +515,7 @@ class GrpcCodeGenerator : public CodeGenerator
             vars["service_name"] = service->name();
             printer.Print(
                 vars,
-                "/** @private @type {!$service_name$} */\n"
+                "/** @const @private @type {!$service_name$} */\n"
                 "this.$service_name$_ = new $service_name$(this);\n");
         }
         printer.Outdent();

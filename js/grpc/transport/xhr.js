@@ -1,5 +1,5 @@
 /**
- * @fileoverview Test transport implementation.
+ * @fileoverview Xhr transport implementation.
  *
  */
 goog.module('grpc.transport.Xhr');
@@ -11,18 +11,15 @@ const XhrObserver = goog.require('grpc.transport.xhr.Observer');
 /**
  * Xhr transport implementation that uses an XmlHttpRequest.
  *
- * @struct
  * @implements {Transport}
- * @template T
- * @template E
  */
-class Xhr {
+class XhrImpl {
 
   /**
    * @param {!grpc.Options} options
    */  
   constructor(options) {
-    /** @const @private @type{!grpc.Options} */
+    /** @const @private */
     this.options_ = options;
   }
   
@@ -43,4 +40,4 @@ class Xhr {
   
 }
 
-exports = Xhr;
+exports = XhrImpl;
