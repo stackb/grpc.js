@@ -23,6 +23,7 @@ closure_js_test(
     srcs = [
         "parser_test.js",
     ],
+    size = "small",
     deps = [
         ":chunk",
         "@io_bazel_rules_closure//closure/library",

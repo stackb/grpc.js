@@ -450,7 +450,7 @@ class GrpcCodeGenerator : public CodeGenerator
         printer.Print(vars, "const GrpcApi = goog.require('grpc.Api');\n");
         printer.Print(vars, "const GrpcEndpoint = goog.require('grpc.Endpoint');\n");
         printer.Print(vars, "const GrpcOptions = goog.require('grpc.Options');\n");
-        printer.Print(vars, "const GrpcRejection = goog.require('grpc.stream.Rejection');\n");
+        printer.Print(vars, "const GrpcRejection = goog.require('grpc.Rejection');\n");
         printer.Print(vars, "const GrpcStatus = goog.require('grpc.Status');\n");
         printer.Print(vars, "const GoogPromise = goog.require('goog.Promise');\n");
         printer.Print(vars, "const Observer = goog.require('grpc.stream.Observer');\n");

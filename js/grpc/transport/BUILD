@@ -18,7 +18,7 @@ closure_js_library(
         "//js/grpc/stream:observer",
         "//js/grpc",
         "@io_bazel_rules_closure//closure/library",
-        "//js/pb",
+        "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
 )
 
@@ -38,7 +38,7 @@ closure_js_library(
         "//js/grpc:options",
         "//js/grpc/transport/chunk",
         "@io_bazel_rules_closure//closure/library",
-        "//js/pb",
+        "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
 )
 
@@ -53,7 +53,7 @@ closure_js_library(
         "//js/grpc:options",
         "//js/grpc/transport/chunk",
         "@io_bazel_rules_closure//closure/library",
-        "//js/pb",
+        "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
 )
 
@@ -70,7 +70,7 @@ closure_js_library(
         "//js/grpc:options",
         "//js/grpc/transport/chunk",
         "@io_bazel_rules_closure//closure/library",
-        "//js/pb",
+        "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
 )
 
@@ -88,7 +88,7 @@ closure_js_test(
         "@io_bazel_rules_closure//closure/library",
         "@io_bazel_rules_closure//closure/library/ui:component",
         "@io_bazel_rules_closure//closure/library:testing",
-        "//js/pb",
+        "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
     suppress = [
         "JSC_INVALID_CAST",

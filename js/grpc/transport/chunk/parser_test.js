@@ -1,11 +1,11 @@
 goog.module('grpc.transport.chunk.ParserTest');
 goog.setTestOnly('grpc.transport.chunk.ParserTest');
 
-const Parser = goog.require('grpc.chunk.Parser');
 const crypt = goog.require('goog.crypt');
 const jsunit = goog.require('goog.testing.jsunit');
 const objects = goog.require('goog.object');
 const testSuite = goog.require('goog.testing.testSuite');
+const { Parser } = goog.require('grpc.chunk.Parser');
 
 testSuite({
 

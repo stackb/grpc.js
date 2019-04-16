@@ -11,16 +11,13 @@ closure_js_library(
     name = "grpc",
     srcs = [
         "transport.js",
-        #"metadata.js",
+        "rejection.js",
         "status.js",
         "endpoint.js",
     ],
     deps = [
-        "//js/grpc/stream:observer",
         "@io_bazel_rules_closure//closure/library",
-        "//js/pb",
-        # "//js/google/protobuf:any",
-        # "//js/google/rpc:status",
+        "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
 )
 

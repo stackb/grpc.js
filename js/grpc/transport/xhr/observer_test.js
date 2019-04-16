@@ -380,7 +380,7 @@ class MockObserver {
     /** @public @type {!Array<!Object>} */
     this.messageStack = [];
 
-    /** @public @type {!Array<!grpc.stream.Rejection>} */
+    /** @public @type {!Array<!grpc.Rejection>} */
     this.errorStack = [];
 
     /** @public @type {number}} */

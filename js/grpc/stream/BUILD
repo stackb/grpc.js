@@ -9,9 +9,9 @@ closure_js_library(
     name = "observer",
     srcs = [
         "observer.js",
-        "rejection.js",
     ],
     deps = [
+        "//js/grpc",
         "@io_bazel_rules_closure//closure/library",
     ],
 )

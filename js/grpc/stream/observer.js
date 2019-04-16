@@ -35,7 +35,7 @@ grpc.stream.Observer.prototype.onNext = function(value) {};
 /**
  * Error value callback for a stream.
  *
- * @param {!grpc.stream.Rejection} err A struct with the status code, message, and headers that detail the error.
+ * @param {!grpc.Rejection} err A struct with the status code, message, and headers that detail the error.
  * return {!grpc.stream.Observer<T>}
  */
 grpc.stream.Observer.prototype.onError = function(err) {};
