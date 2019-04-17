@@ -21,9 +21,3 @@ closure_js_library(
         "@io_bazel_rules_closure//closure/library",
     ],
 )
-
-# Next: create a grpc.Application or grpc.Api base class that can be
-# configurable.  Remove the endpoint args from the calls.  Make the
-# constructor arg the api object rather than the transport.  Make a
-# getTransport() method that abstracts the transport.  Start testing
-# the streaming endpoint.
