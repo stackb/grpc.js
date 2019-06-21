@@ -228,7 +228,6 @@ class Observer {
    * @param {GrpcStatus} status The status to assign.
    */
   setStatus(status) {
-    console.warn(`Status change: ${this.status_} -> ${status}`);
     this.status_ = asserts.assertNumber(status);
   }
 
@@ -327,7 +326,7 @@ class Observer {
    * @return {!GrpcStatus}
    */
   getGrpcStatusFromHttpStatus(status) {
-    console.log(`Mapping HTTP status code ${status} to grpc status code`);
+    // console.log(`Mapping HTTP status code ${status} to grpc status code`);
     switch (status) {
     case 0:
       return GrpcStatus.INTERNAL;
