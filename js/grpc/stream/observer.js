@@ -18,7 +18,6 @@ grpc.stream.Observer = function() {};
  * @param {!Object<string,string>} headers Headers
  * @param {grpc.Status} status Current grpcStatus code
  * @param {boolean=} opt_isTrailing Flag set if these are Trailers
- * return {!grpc.stream.Observer<T>}
  */
 grpc.stream.Observer.prototype.onProgress = function(headers, status, opt_isTrailing) {};
 
@@ -27,7 +26,6 @@ grpc.stream.Observer.prototype.onProgress = function(headers, status, opt_isTrai
  * Success value callback for a stream.
  *
  * @param {T} value The protobuf value
- * return {!grpc.stream.Observer<T>}
  */
 grpc.stream.Observer.prototype.onNext = function(value) {};
 
@@ -36,13 +34,11 @@ grpc.stream.Observer.prototype.onNext = function(value) {};
  * Error value callback for a stream.
  *
  * @param {!grpc.Rejection} err A struct with the status code, message, and headers that detail the error.
- * return {!grpc.stream.Observer<T>}
  */
 grpc.stream.Observer.prototype.onError = function(err) {};
 
 
 /**
  * Stream termination callback.
- * return {!grpc.stream.Observer<T>}
  */
 grpc.stream.Observer.prototype.onCompleted = function() {};

@@ -4,7 +4,7 @@ const FetchTransport = goog.require('grpc.transport.Fetch');
 const GrpcOptions = goog.require('grpc.Options');
 const Transport = goog.require('grpc.Transport');
 const XhrTransport = goog.require('grpc.transport.Xhr');
-const browser = goog.require('goog.labs.userAgent.browser');
+// const browser = goog.require('goog.labs.userAgent.browser');
 
 
 /**
@@ -43,7 +43,13 @@ class Api {
 * @return {boolean}
 */
 function fetchSupported() {
- return browser.isChrome();
+  return false;
+  //
+  // Disabiling fetch support until it can be debugged better.  Seeing issues
+  // where connection is suffering from connection loss, and there is no way to
+  // detect the failure?
+  //
+  // return browser.isChrome();
 }
 
 

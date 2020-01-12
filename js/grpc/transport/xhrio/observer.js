@@ -312,11 +312,11 @@ class Observer {
    * @param {!ProgressEvent} e
    */
   handleXhrProgress(e) {
-    console.log(`PROGRESS! ` + this.status_);
+    // console.log(`PROGRESS! ` + this.status_);
 
     //const raw = this.xhr_.getResponseText();
     const raw = this.xhr_.getResponse();
-    console.log(`Raw Response Text: "${raw}"`, raw);
+    // console.log(`Raw Response Text: "${raw}"`, raw);
     for (let i = 0; i < raw.length; i++) {
     }
     if (raw) {
@@ -330,7 +330,7 @@ class Observer {
         console.log(`lastest ${this.index_}: ${i} - buffer[${i}]: ${this.byteString(buffer[i])} ${String.fromCharCode(buffer[i])} ${buffer[i]}`);
       }
 
-      console.log(`Advancing index to ${raw.length}`);
+      // console.log(`Advancing index to ${raw.length}`);
       // advance the pointer
       this.index_ = raw.length;
 
@@ -375,12 +375,12 @@ class Observer {
     
     chunks.forEach(chunk => {
       if (chunk.isMessage()) {
-        console.warn("CHUNK MESSAGE", chunk);
+        // console.warn("CHUNK MESSAGE", chunk);
         const proto = this.decoder_(chunk.getData());
-        console.warn("CHUNK PROTO", proto);
+        // console.warn("CHUNK PROTO", proto);
         this.observer_.onNext(proto);
       } else {
-        console.warn("CHUNK HEADERS/TRAILERS", chunk);
+        // console.warn("CHUNK HEADERS/TRAILERS", chunk);
         this.observer_.onProgress(chunk.getTrailers(), this.status_, true);
       }
     });
@@ -401,7 +401,7 @@ class Observer {
    * @param {!Event} e
    */
   handleXhrTimeout(e) {
-    console.log('TIMEOUT!', e);
+    // console.log('TIMEOUT!', e);
     if (this.status_ === GrpcStatus.UNKNOWN) {
       this.setStatus(GrpcStatus.DEADLINE_EXCEEDED);
       this.reportError("Xhr timed out while processing the request / " + this.xhr_.getStatusText());
@@ -414,7 +414,7 @@ class Observer {
    * @param {!Event} e
    */
   handleXhrAbort(e) {
-    console.log('ABORT!', e);
+    // console.log('ABORT!', e);
     if (this.status_ === GrpcStatus.UNKNOWN) {
       this.setStatus(GrpcStatus.ABORTED);
       this.reportError("Xhr was forcefully aborted while processing the request / " + this.xhr_.getStatusText());
@@ -427,7 +427,7 @@ class Observer {
    * @param {!Event} e
    */
   handleXhrError(e) {
-    console.log('ERROR!', e);
+    // console.log('ERROR!', e);
     if (this.status_ === GrpcStatus.UNKNOWN) {
       this.setStatus(GrpcStatus.ABORTED);
       this.reportError("Xhr suffered an error while processing the request / " + this.xhr_.getStatusText());

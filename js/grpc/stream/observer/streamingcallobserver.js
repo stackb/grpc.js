@@ -26,11 +26,11 @@ class StreamingCallObserver extends UnaryCallObserver {
    * @override
    */
   onNext(value) {
+    // console.info("stream callback", value);
     this.onMessage_(value);
-    return super.onNext(value);
+    super.onNext(value);
   }
 
-  
   /**
    * @override
    */
@@ -41,7 +41,7 @@ class StreamingCallObserver extends UnaryCallObserver {
     this.resolver.resolve();
     delete this.resolver;
   }
-  
+
 }
 
 exports = StreamingCallObserver;

@@ -34,10 +34,10 @@ class Observer {
 
     // console.log('grpc options: ', options);
     // console.log('opt_endpoint: ', opt_endpoint);
-    
+
     /** @const @protected */
     this.options = options;
-    
+
     /** @const @private */
     this.name_ = name;
 
@@ -182,9 +182,8 @@ class Observer {
     this.setStatus(GrpcStatus.UNKNOWN);
   }
 
-  
   /**
-   * Set the observer grpc status code.
+   * Construct the endpoint URL.
    * @protected
    * @return {string} THe URL to connect to
    */
@@ -233,7 +232,7 @@ class Observer {
 
   /**
    * Get the current observer grpc status code.
-   * @return {GrpcStatus} 
+   * @return {GrpcStatus}
    */
   getStatus() {
     return this.status_;
@@ -277,7 +276,7 @@ class Observer {
    * Take a number in the range 0..255 and show it as a binary-encoded BYTE.
    * https://stackoverflow.com/questions/24337260/javascript-a-byte-is-suppose-to-be-8-bits
    *
-   * @param {number} n 
+   * @param {number} n
    * @return {string}
    */
   byteString(n) {
@@ -286,7 +285,7 @@ class Observer {
     }
     return ("000000000" + n.toString(2)).substr(-8);
   }
-  
+
   /**
    * Parse the buffer into a chunk and pass it on as either a message
    * or a set of trailers.
@@ -296,7 +295,7 @@ class Observer {
    */
   handleChunk(buffer) {
     let chunks = [];
-    
+
     try {
       chunks = this.parser_.parse(buffer);
       //console.warn('Parsed chunks: ' + chunks.length);
@@ -306,7 +305,7 @@ class Observer {
     }
 
     //console.warn("CHUNK", buffer, chunks);
-    
+
     chunks.forEach(chunk => {
       if (chunk.isMessage()) {
         //console.warn("CHUNK MESSAGE", chunk);

@@ -447,7 +447,7 @@ class Observer {
    * @param {!Event} e
    */
   handleXhrTimeout(e) {
-    console.log('TIMEOUT!', e);
+    // console.log('TIMEOUT!', e);
     if (this.status_ === GrpcStatus.UNKNOWN) {
       this.setStatus(GrpcStatus.DEADLINE_EXCEEDED);
       this.reportError("Xhr timed out while processing the request / " + this.xhr_.statusText);
@@ -460,7 +460,7 @@ class Observer {
    * @param {!Event} e
    */
   handleXhrAbort(e) {
-    console.log('ABORT!', e);
+    // console.log('ABORT!', e);
     if (this.status_ === GrpcStatus.UNKNOWN) {
       this.setStatus(GrpcStatus.ABORTED);
       this.reportError("Xhr was forcefully aborted while processing the request / " + this.xhr_.statusText);
@@ -473,7 +473,7 @@ class Observer {
    * @param {!Event} e
    */
   handleXhrError(e) {
-    console.log('ERROR!', e);
+    // console.log('ERROR!', e);
     if (this.status_ === GrpcStatus.UNKNOWN) {
       this.setStatus(GrpcStatus.ABORTED);
       this.reportError("Xhr suffered an error while processing the request / " + this.xhr_.statusText);

@@ -40,12 +40,12 @@ class UnaryCallObserver extends EventTarget {
     this.trailers_ = undefined;
 
     /** @private @type {T} */
-    this.value_ = undefined;    
+    this.value_ = undefined;
   }
 
   /**
    * Base implementation resolves with the final message value.
-   * 
+   *
    * @protected
    */
   handleResolve() {
@@ -59,12 +59,12 @@ class UnaryCallObserver extends EventTarget {
 
   /**
    * Base implementation rejects with a Rejection object.
-   * 
+   *
    * @protected
    */
   handleReject() {
     if (!this.resolver) {
-      throw new Error("Illegal state (onCompleted called more than once)");
+      throw new Error("Illegal state (completion called more than once)");
     }
     const rejection = {
       status: this.status_ || GrpcStatus.UNKNOWN,
@@ -72,6 +72,9 @@ class UnaryCallObserver extends EventTarget {
       headers: this.headers_ || {},
       trailers: this.trailers_ || {},
     };
+
+    // console.log("observer.handleReject: sending rejection to resolver: ", this.resolver);
+
     this.resolver.reject(rejection);
     delete this.resolver;
   }
@@ -84,7 +87,7 @@ class UnaryCallObserver extends EventTarget {
    * @param {boolean=} opt_isTrailing Flag set if these are Trailers
    */
   onProgress(headers, status, opt_isTrailing) {
-    //console.warn("onProgress: ", status + " HEADERS: " + opt_isTrailing, headers);
+    // console.warn("onProgress: ", status + " HEADERS: " + opt_isTrailing, headers);
     const grpcStatus = this.getGrpcStatus(headers);
     //console.warn("onProgress grpcStatus: ", grpcStatus);
     if (goog.isDefAndNotNull(grpcStatus)) {
@@ -105,28 +108,26 @@ class UnaryCallObserver extends EventTarget {
         this.dispatchEvent(EventType.HEADERS);
       }
     }
-    //return;
   }
 
-  
+
   /**
    * @override
    */
   onNext(value) {
-    //console.log("onNext", this);
+    // console.log("onNext", this);
     if (!this.resolver) {
       throw new Error("Illegal state (onNext called after procedure completed)");
     }
     this.value_ = value;
-    //return this;
   }
 
-  
+
   /**
    * @override
    */
   onError(err) {
-    //console.log("onError", this);
+    // console.log("observer.onError", err);
     if (!this.resolver) {
       throw new Error("Illegal state (onError called after procedure completed)");
     }
@@ -134,9 +135,8 @@ class UnaryCallObserver extends EventTarget {
     this.status_ = err.status;
     if (this.hasListener(EventType.ERROR)) {
       this.dispatchEvent(EventType.ERROR);
-    }    
+    }
     this.handleReject();
-    //return this;
   }
 
 
@@ -150,15 +150,13 @@ class UnaryCallObserver extends EventTarget {
     }
     if (this.hasListener(EventType.COMPLETE)) {
       this.dispatchEvent(EventType.COMPLETE);
-    }    
+    }
 
     if (this.status_) {
       this.handleReject();
     } else {
       this.handleResolve();
     }
-
-    //return this;
   }
 
 
@@ -190,7 +188,7 @@ class UnaryCallObserver extends EventTarget {
 
   /**
    * Return the 'Grpc-Message' response header value.
-   * 
+   *
    * @protected
    * @param {?Object<string,string>=} headers
    * @return {string|undefined}

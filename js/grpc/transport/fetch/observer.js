@@ -120,19 +120,26 @@ class Observer extends BaseObserver {
     // report headers
     this.observer.onProgress(getHeadersAsObject(res.headers), grpcStatus, false);
 
-    // start the pump cycle if this is a readable stream
-    if (res.body) {
-      this.pump(res.body.getReader());
-    } else {
-      console.warn("Not a readable response (Response.body property undefined)", res);
-      if (res.arrayBuffer) {
-        res.arrayBuffer().then(buf => this.handleChunk(new Uint8Array(buf)));
-      } else {
-        console.warn("Response has no arrayBuffer promiser", res);
-      }
+    // If the response was not 200, fail now
+    if (grpcStatus !== GrpcStatus.OK) {
+      this.reportError(grpcStatus, res.statusText);
+      return;
     }
 
-    // Do other stuff here?
+    // start the pump cycle if this is a readable stream
+    if (res.body) {
+      // console.info("fetch responsed with a body, starting pump cycle...");
+      this.pump(res.body.getReader());
+      return;
+    }
+
+    if (res.arrayBuffer) {
+      // console.info("fetch responsed with an array buffer, handling chunk...");
+      res.arrayBuffer().then(buf => this.handleChunk(new Uint8Array(buf)));
+      return;
+    }
+
+    // console.warn("Response has no arrayBuffer promiser", res);
   }
 
   /**
@@ -142,12 +149,12 @@ class Observer extends BaseObserver {
     const err = /** @type {!TypeError} */(e);
     console.warn("Fetch error", err, arguments);
     if (this.cancelled_) {
-      // reportCompleted already processed?
+      // console.warn("Fetch has already been cancelled, so the skipping reportError will be skipped");
       return;
     }
 
     this.cancelled_ = true;
-    this.reportError(GrpcStatus.UNAVAILABLE, `Fetch error: ${err.message}`);
+    this.reportError(GrpcStatus.UNKNOWN, `a network error has been reported by the fetch API: ${err.message}`);
   }
 
   /**
@@ -156,10 +163,12 @@ class Observer extends BaseObserver {
    */
   pump(reader) {
     if (!reader) {
+      // console.warn("pump: reader null, aborting");
       return;
     }
     if (this.cancelled_) {
-      reader.cancel("Observation previously cancelled.");
+      // console.warn("pump: observation cancelled, aborting");
+      reader.cancel("Observation previously cancelled.");      
       return;
     }
 
@@ -174,11 +183,16 @@ class Observer extends BaseObserver {
    * @param {!ReadableStreamResult} result 
    */
   handleReadResult(result) {
+    if (result.value) {
+      this.handleChunk(asserts.assertObject(/** @type {!Uint8Array} */(result.value)));
+    }
+
     if (result.done) {
+      // console.warn("handleReadResult: result.done, reporing completion");
       this.reportCompleted();
       return;
     }
-    this.handleChunk(asserts.assertObject(/** @type {!Uint8Array} */(result.value)));
+
     this.pump(this.reader_);
   }
 
@@ -249,7 +263,6 @@ class Observer extends BaseObserver {
     this.reader_ = null;
     this.controller_ = null;
   }
-
 
 }
 
