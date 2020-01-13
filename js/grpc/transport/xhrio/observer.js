@@ -276,7 +276,7 @@ class Observer {
     for (let i = 0; i < str.length; i++) {
       //const codePoint = (String.prototype as any).codePointAt ? (str as any).codePointAt(i) : codePointAtPolyfill(str, i);
       const codePoint = str.codePointAt(i);
-      console.log(`raw[${bufIndex},${i}] = ${codePoint} (${str.charAt(i)})`);
+      // console.log(`raw[${bufIndex},${i}] = ${codePoint} (${str.charAt(i)})`);
       buffer[bufIndex++] = codePoint & 0xFF;
     }
     return buffer;
@@ -324,11 +324,10 @@ class Observer {
       const latest = raw.substr(this.index_);
       // convert to arraybuffer
       const buffer = this.stringToArrayBuffer(latest);
-
       
-      for (let i = 0; i < buffer.length; i++) {
-        console.log(`lastest ${this.index_}: ${i} - buffer[${i}]: ${this.byteString(buffer[i])} ${String.fromCharCode(buffer[i])} ${buffer[i]}`);
-      }
+      // for (let i = 0; i < buffer.length; i++) {
+      //   console.log(`lastest ${this.index_}: ${i} - buffer[${i}]: ${this.byteString(buffer[i])} ${String.fromCharCode(buffer[i])} ${buffer[i]}`);
+      // }
 
       // console.log(`Advancing index to ${raw.length}`);
       // advance the pointer
