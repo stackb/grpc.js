@@ -149,12 +149,11 @@ class Observer extends BaseObserver {
     const err = /** @type {!TypeError} */(e);
     console.warn("Fetch error", err, arguments);
     if (this.cancelled_) {
-      // console.warn("Fetch has already been cancelled, so the skipping reportError will be skipped");
       return;
     }
 
     this.cancelled_ = true;
-    this.reportError(GrpcStatus.UNKNOWN, `a network error has been reported by the fetch API: ${err.message}`);
+    this.reportError(GrpcStatus.UNAVAILABLE, `fetch API: ${err.message}`);
   }
 
   /**
