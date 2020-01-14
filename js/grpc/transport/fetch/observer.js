@@ -147,7 +147,7 @@ class Observer extends BaseObserver {
    */
   handleFetchError(e) {
     const err = /** @type {!TypeError} */(e);
-    console.warn("Fetch error", err, arguments);
+    // console.warn("Fetch error", err, arguments);
     if (this.cancelled_) {
       return;
     }
@@ -201,7 +201,7 @@ class Observer extends BaseObserver {
    */
   handleReadError(e) {
     const err = /** @type {!TypeError} */(e);
-    console.warn("Fetch read error", err, arguments);
+    // console.warn("Fetch read error", err, arguments);
     this.reportError(GrpcStatus.UNAVAILABLE, `Fetch read error: ${err.message}`);
   }
 
