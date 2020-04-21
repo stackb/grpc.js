@@ -7,7 +7,7 @@ const JspbBinaryReader = goog.require('jspb.BinaryReader');
 const JspbBinaryWriter = goog.require('jspb.BinaryWriter');
 const JspbByteSource = goog.require('jspb.ByteSource');
 const JspbMessage = goog.require('jspb.Message');
-const StreamObserver = goog.require('grpc.stream.Observer');
+const StreamObserver = goog.require('grpc.Observer');
 const TestXhrIo = goog.require('goog.testing.net.XhrIo');
 const Xhr = goog.require('grpc.transport.Xhr');
 const XhrObserver = goog.require('grpc.transport.xhr.Observer');
@@ -22,7 +22,7 @@ testSuite({
   setUp: () => {
     assertNotNull(jsunit);
   },
-  
+
   testEmpty: () => {
 
     const options = new GrpcOptions();
@@ -51,13 +51,13 @@ testSuite({
 
     // Should transition to UNKNOWN state
     assertEquals(GrpcStatus.UNKNOWN, stream.getStatus());
-    
+
     // POSTing to root of origin with given name.
     assertEquals('POST', xhr.getLastMethod());
     assertEquals('/mockService.getFoo', xhr.getLastUri());
     assertEquals("application/grpc-web+proto", xhr.getLastRequestHeaders()["content-type"]);
     assertEquals("1", xhr.getLastRequestHeaders()["x-grpc-web"]);
-    assertTrue(/** @type {!Uint8Array} */ (xhr.getLastContent()) instanceof Uint8Array);
+    assertTrue(/** @type {!Uint8Array} */(xhr.getLastContent()) instanceof Uint8Array);
     // First 5 is the frame header, then the encoded protobuf
     assertUint8ArrayEquals(new Uint8Array([0, 0, 0, 0, 5, 10, 3, 102, 111, 111]), xhr.getLastContent());
 
@@ -67,14 +67,14 @@ testSuite({
     });
 
     assertEquals(2, objects.getCount(xhr.getResponseHeaders()));
-    
+
     // AT LOADING PHASE
     //xhr.simulateReadyStateChange(3);
     assertEquals(200, xhr.getStatus());
 
     // Stream should be in OK state
     assertEquals(GrpcStatus.OK, stream.getStatus());
-    
+
     // Mock observer should have recvd a progress message
     assertEquals(1, mockObserver.progressStack.length);
     assertEquals(GrpcStatus.OK, mockObserver.progressStack[0].status);
@@ -96,7 +96,7 @@ testSuite({
     assertEquals(0, mockObserver.messageStack.length);
     xhr.simulateMessageResponse([10, 3, 65, 66, 67]);
     assertEquals(1, mockObserver.messageStack.length);
-    assertEquals("ABC", /** @type {!MockProtocolBuffer} */ (mockObserver.messageStack[0]).name);
+    assertEquals("ABC", /** @type {!MockProtocolBuffer} */(mockObserver.messageStack[0]).name);
 
     // And a trailer
     xhr.simulateHeaderTrailerResponse({
@@ -135,7 +135,7 @@ function assertUint8ArrayEquals(a, b) {
 
   assertEquals('Buffer lengths should match', ua.byteLength, ub.byteLength);
   for (let i = 0; i < ua.length; i++) {
-    assertEquals('Should match at position ' + i, ua[i], ub[i]);    
+    assertEquals('Should match at position ' + i, ua[i], ub[i]);
   }
   return true;
 }
@@ -172,14 +172,14 @@ class MockProtocolBuffer extends JspbMessage {
     message.deserializeBinary(bytes);
     return message;
   }
-  
+
   constructor() {
     super();
     /** @public @type {string} */
     this.name = "foo";
   }
 
-  
+
   /**
    * Deserializes binary data (in protobuf wire format).
    * @param {!JspbByteSource} bytes The bytes to deserialize.
@@ -203,18 +203,18 @@ class MockProtocolBuffer extends JspbMessage {
       }
       const field = reader.getFieldNumber();
       switch (field) {
-      case 1:
-        const value = /** @type {string} */ (reader.readString());
-        this.name = value;
-        break;
-      default:
-        throw new Error(`Unexpected input field: ${field}` + reader);
+        case 1:
+          const value = /** @type {string} */ (reader.readString());
+          this.name = value;
+          break;
+        default:
+          throw new Error(`Unexpected input field: ${field}` + reader);
       }
     }
     return this;
   }
 
-  
+
   /**
    * Serializes the message to binary data (in protobuf wire format).
    * @return {!Uint8Array}
@@ -234,7 +234,7 @@ class MockProtocolBuffer extends JspbMessage {
   serializeBinaryToWriter(writer) {
     writer.writeString(1, this.name);
   }
-  
+
 }
 
 
@@ -265,7 +265,7 @@ class MockXhrIo extends TestXhrIo {
     }
     return s;
   }
-  
+
 
   /**
    * @param {!Object<string,string>} headers
@@ -290,7 +290,7 @@ class MockXhrIo extends TestXhrIo {
     this.simulateProgress(true, 0, raw.length);
   }
 
-  
+
   /**
    * @param {!Array<number>} data
    */
@@ -301,7 +301,7 @@ class MockXhrIo extends TestXhrIo {
     this.simulateProgress(true, 0, raw.length);
   }
 
-  
+
   /**
    * Decode the base64 content we set above.
    * 
@@ -329,7 +329,7 @@ class MockXhrIo extends TestXhrIo {
     });
     return headers;
   }
-  
+
 }
 
 /**
@@ -353,7 +353,7 @@ class MockXhr extends Xhr {
     xhr.headers.set("x-grpc-web", "1");
     xhr.headers.set("x-user-agent", "grpc-web-javascript/0.1");
   }
-  
+
   /**
    * @override
    */
@@ -385,9 +385,9 @@ class MockObserver {
 
     /** @public @type {number}} */
     this.isCompleted = 0;
-    
+
   }
-  
+
   /** @override */
   onProgress(headers, status, isTrailer) {
     console.log('Progress recvd ' + status + isTrailer, JSON.stringify(headers));

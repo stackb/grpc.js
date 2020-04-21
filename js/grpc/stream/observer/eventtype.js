@@ -1,10 +1,10 @@
-goog.provide('grpc.stream.observer.EventType');
+goog.module('grpc.stream.observer.EventType');
 
 /**
  * @public
  * @enum {string}
  */
-grpc.stream.observer.EventType = {
+exports = {
   MESSAGE: 'message',
   ERROR: 'error',
   HEADERS: 'headers',

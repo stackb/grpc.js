@@ -14,7 +14,8 @@ const HttpStatus = goog.require('goog.net.HttpStatus');
 const JspbByteSource = goog.require('jspb.ByteSource');
 const NetEventType = goog.require('goog.net.EventType');
 const ReadyState = goog.require('goog.net.XmlHttp.ReadyState');
-const StreamObserver = goog.require('grpc.stream.Observer');
+const StreamObserver = goog.require('grpc.Observer');
+const TransportXhr = goog.require('grpc.transport.Xhr');
 const asserts = goog.require('goog.asserts');
 const objects = goog.require('goog.object');
 
@@ -27,7 +28,7 @@ const objects = goog.require('goog.object');
 class Observer {
 
   /**
-   * @param {!grpc.transport.Xhr} xhrTransport
+   * @param {!TransportXhr} xhrTransport
    * @param {!GrpcOptions} options
    * @param {string} name
    * @param {!function(T):!JspbByteSource} encoder A serializer function that can encode input messages.
@@ -39,16 +40,16 @@ class Observer {
 
     // console.log('grpc options: ', options);
     // console.log('opt_endpoint: ', opt_endpoint);
-    
+
     /**
      * Instance of the xhrTransport.
-     * @const @private @type {!grpc.transport.Xhr}
+     * @const @private @type {!TransportXhr}
      */
     this.xhrTransport_ = xhrTransport;
 
     /** @const @private @type{!GrpcOptions} */
     this.options_ = options;
-    
+
     /** @const @private @type {string} */
     this.name_ = name;
 
@@ -61,7 +62,7 @@ class Observer {
     /** @const @private @type {!StreamObserver<T>} */
     this.observer_ = observer;
 
-     /** @const @private @type {Endpoint|undefined|null} */
+    /** @const @private @type {?Endpoint|undefined} */
     this.endpoint_ = opt_endpoint;
 
     /** @const @private @type {!EventHandler} */
@@ -98,7 +99,7 @@ class Observer {
      * return value of the gRPC call.  We start out in INTERNAL.
      *
      * @private
-     * @type {GrpcStatus}
+     * @type {!GrpcStatus}
      */
     this.status_ = GrpcStatus.INTERNAL;
 
@@ -186,14 +187,14 @@ class Observer {
     if (this.status_ != GrpcStatus.INTERNAL) {
       this.setStatus(GrpcStatus.FAILED_PRECONDITION);
       this.reportError('No more input is possible, observer has already completed with status code: ' + this.status_);
-      return ;
+      return;
     }
 
     // Switch to UNKNOWN status just before sending the request.
     // Demarcates that the request has committed.
     this.setStatus(GrpcStatus.UNKNOWN);
 
-   // Get an xhr
+    // Get an xhr
     const xhr = this.xhr_ = this.xhrTransport_.createObject();
 
     xhr.open("POST", this.getEndpointUrl());
@@ -215,7 +216,7 @@ class Observer {
         xhr.setRequestHeader(key, val);
       });
     }
-    
+
     // Headers for this call
     if (this.headers_) {
       objects.forEach(this.headers_, (val, key) => {
@@ -237,7 +238,7 @@ class Observer {
     return;
   }
 
-  
+
   /**
    * Set the observer grpc status code.
    * @protected
@@ -288,7 +289,7 @@ class Observer {
 
   /**
    * Get the current observer grpc status code.
-   * @return {GrpcStatus} 
+   * @return {!GrpcStatus} 
    */
   getStatus() {
     return this.status_;
@@ -300,7 +301,7 @@ class Observer {
    * @param {T} value
    * @return {!ArrayBufferView}
    */
-  frameRequest(value)  {
+  frameRequest(value) {
     const bytes = /** @type {!Uint8Array} */ (this.encoder_(value));
     const frame = new ArrayBuffer(bytes.byteLength + 5);
     new DataView(frame, 1, 4).setUint32(0, bytes.length, false /* big endian */);
@@ -340,7 +341,7 @@ class Observer {
     }
   }
 
-  
+
   /**
    * Called when readystate LOADED.  We can look at the response
    * status and the response headers now.
@@ -371,12 +372,12 @@ class Observer {
       // convert to arraybuffer
       const buffer = this.stringToArrayBuffer(latest);
 
-     
+
       // for (let i = 0; i < buffer.length; i++) {
       //   console.log(`lastest ${this.index_}: ${i} - buffer[${i}]: ${this.byteString(buffer[i])} ${String.fromCharCode(buffer[i])} ${buffer[i]}`);
       // }
       // console.log(`Advancing index to ${raw.length}`);
-      
+
       // advance the pointer
       this.index_ = raw.length;
 
@@ -398,7 +399,7 @@ class Observer {
     }
     return ("000000000" + n.toString(2)).substr(-8);
   }
-  
+
   /**
    * Parse the buffer into a chunk and pass it on as either a message
    * or a set of trailers.
@@ -407,7 +408,7 @@ class Observer {
    */
   handleChunk(buffer) {
     let chunks = [];
-    
+
     try {
       chunks = this.parser_.parse(buffer);
       //console.warn('Parsed chunks: ' + chunks.length);
@@ -418,7 +419,7 @@ class Observer {
     }
 
     //console.warn("CHUNK", buffer, chunks);
-    
+
     chunks.forEach(chunk => {
       if (chunk.isMessage()) {
         //console.warn("CHUNK MESSAGE", chunk);
@@ -489,36 +490,36 @@ class Observer {
   getGrpcStatusFromHttpStatus() {
     //console.log('Mapping HTTP status code to grpc status code: ' + this.xhr_.getStatus());
     switch (this.xhr_.status) {
-    case 0:
-      return GrpcStatus.INTERNAL;
-    case HttpStatus.OK: // 200
-      return GrpcStatus.OK;
-    case HttpStatus.BAD_REQUEST: // 400
-      return GrpcStatus.INVALID_ARGUMENT;
-    case HttpStatus.UNAUTHORIZED: // 401
-      return GrpcStatus.UNAUTHENTICATED;
-    case HttpStatus.FORBIDDEN: // 403
-      return GrpcStatus.PERMISSION_DENIED;
-    case HttpStatus.NOT_FOUND: // 404
-      return GrpcStatus.NOT_FOUND;
-    case HttpStatus.CONFLICT: // 409
-      return GrpcStatus.ABORTED;
-    case HttpStatus.PRECONDITION_FAILED: // 412
-      return GrpcStatus.FAILED_PRECONDITION;
-    case HttpStatus.TOO_MANY_REQUESTS: // 429
-      return GrpcStatus.RESOURCE_EXHAUSTED;
-    case 499:
-      return GrpcStatus.CANCELED;
-    case HttpStatus.INTERNAL_SERVER_ERROR: // 500
-      return GrpcStatus.UNKNOWN;
-    case HttpStatus.NOT_IMPLEMENTED: // 501
-      return GrpcStatus.UNIMPLEMENTED;
-    case HttpStatus.SERVICE_UNAVAILABLE: // 503
-      return GrpcStatus.UNAVAILABLE;
-    case HttpStatus.GATEWAY_TIMEOUT: // 504
-      return GrpcStatus.DEADLINE_EXCEEDED;
-    default:
-      return GrpcStatus.UNKNOWN;
+      case 0:
+        return GrpcStatus.INTERNAL;
+      case HttpStatus.OK: // 200
+        return GrpcStatus.OK;
+      case HttpStatus.BAD_REQUEST: // 400
+        return GrpcStatus.INVALID_ARGUMENT;
+      case HttpStatus.UNAUTHORIZED: // 401
+        return GrpcStatus.UNAUTHENTICATED;
+      case HttpStatus.FORBIDDEN: // 403
+        return GrpcStatus.PERMISSION_DENIED;
+      case HttpStatus.NOT_FOUND: // 404
+        return GrpcStatus.NOT_FOUND;
+      case HttpStatus.CONFLICT: // 409
+        return GrpcStatus.ABORTED;
+      case HttpStatus.PRECONDITION_FAILED: // 412
+        return GrpcStatus.FAILED_PRECONDITION;
+      case HttpStatus.TOO_MANY_REQUESTS: // 429
+        return GrpcStatus.RESOURCE_EXHAUSTED;
+      case 499:
+        return GrpcStatus.CANCELED;
+      case HttpStatus.INTERNAL_SERVER_ERROR: // 500
+        return GrpcStatus.UNKNOWN;
+      case HttpStatus.NOT_IMPLEMENTED: // 501
+        return GrpcStatus.UNIMPLEMENTED;
+      case HttpStatus.SERVICE_UNAVAILABLE: // 503
+        return GrpcStatus.UNAVAILABLE;
+      case HttpStatus.GATEWAY_TIMEOUT: // 504
+        return GrpcStatus.DEADLINE_EXCEEDED;
+      default:
+        return GrpcStatus.UNKNOWN;
     }
   }
 
@@ -530,7 +531,7 @@ class Observer {
   getGrpcStatusFromResponseHeader() {
     try {
       const grpcStatus = this.xhr_.getResponseHeader("Grpc-Status");
-      if (!goog.isDefAndNotNull(grpcStatus)) {
+      if (grpcStatus == null) {
         return null;
       }
       const statusCode = /** @type {!GrpcStatus} */ (parseInt(grpcStatus, 10));

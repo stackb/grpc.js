@@ -9,15 +9,14 @@ closure_js_library(
     name = "call",
     srcs = [
         "eventtype.js",
-        "unarycallobserver.js",
         "streamingcallobserver.js",
+        "unarycallobserver.js",
     ],
     suppress = [
         "JSC_UNKNOWN_EXPR_TYPE",
     ],
     deps = [
         "//js/grpc",
-        "//js/grpc/stream:observer",
         "@io_bazel_rules_closure//closure/library",
     ],
 )

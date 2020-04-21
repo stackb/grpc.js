@@ -2,9 +2,11 @@
  * @fileoverview grpc Transport interface.
  *
  */
-goog.provide('grpc.Transport');
+goog.module('grpc.Transport');
 
-goog.require('jspb.ByteSource');
+const ByteSource = goog.require('jspb.ByteSource');
+const Endpoint = goog.require('grpc.Endpoint');
+const Observer = goog.require('grpc.Observer');
 
 
 /**
@@ -13,19 +15,20 @@ goog.require('jspb.ByteSource');
  *
  * @interface
  */
-grpc.Transport = function() {};
+const Transport = function () { };
 
 /**
  * Call a remote procedure.
  *
  * @param {string} name The name of the procedure to call
- * @param {!function(INPUT):!jspb.ByteSource} encoder A serializer function that can encode input messages.
- * @param {!function(!jspb.ByteSource):OUTPUT} decoder A serializer function that can decode output messages.
- * @param {!grpc.stream.Observer<OUTPUT>} observer An observer used to recieve events.
- * @param {?grpc.Endpoint=} opt_endpoint Optional additional endpoint configuration.
- * @return {!grpc.stream.Observer<INPUT>} The input observer that the caller should provide events to.
+ * @param {!function(INPUT):!ByteSource} encoder A serializer function that can encode input messages.
+ * @param {!function(!ByteSource):OUTPUT} decoder A serializer function that can decode output messages.
+ * @param {!Observer<OUTPUT>} observer An observer used to recieve events.
+ * @param {?Endpoint=} opt_endpoint Optional additional endpoint configuration.
+ * @return {!Observer<INPUT>} The input observer that the caller should provide events to.
  * @template INPUT
  * @template OUTPUT
  */
-grpc.Transport.prototype.call = function(name, encoder, decoder, observer, opt_endpoint) {};
+Transport.prototype.call = function (name, encoder, decoder, observer, opt_endpoint) { };
 
+exports = Transport;

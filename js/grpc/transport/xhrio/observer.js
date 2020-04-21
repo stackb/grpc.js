@@ -12,7 +12,7 @@ const HttpStatus = goog.require('goog.net.HttpStatus');
 const JspbByteSource = goog.require('jspb.ByteSource');
 const NetEventType = goog.require('goog.net.EventType');
 const ReadyState = goog.require('goog.net.XmlHttp.ReadyState');
-const StreamObserver = goog.require('grpc.stream.Observer');
+const StreamObserver = goog.require('grpc.Observer');
 const asserts = goog.require('goog.asserts');
 
 /**
@@ -51,7 +51,7 @@ class Observer {
     /** @private @type {!StreamObserver<T>} */
     this.observer_ = observer;
 
-     /** @private @type {Endpoint|undefined|null} */
+    /** @private @type {Endpoint|undefined|null} */
     this.endpoint_ = opt_endpoint;
 
     /** @private @type {!EventHandler} */
@@ -254,7 +254,7 @@ class Observer {
    * @param {T} value
    * @return {!ArrayBufferView}
    */
-  frameRequest(value)  {
+  frameRequest(value) {
     const bytes = /** @type {!Uint8Array} */ (this.encoder_(value));
     const frame = new ArrayBuffer(bytes.byteLength + 5);
     new DataView(frame, 1, 4).setUint32(0, bytes.length, false /* big endian */);
@@ -294,7 +294,7 @@ class Observer {
     }
   }
 
-  
+
   /**
    * Called when readystate LOADED.  We can look at the response
    * status and the response headers now.
@@ -324,7 +324,7 @@ class Observer {
       const latest = raw.substr(this.index_);
       // convert to arraybuffer
       const buffer = this.stringToArrayBuffer(latest);
-      
+
       // for (let i = 0; i < buffer.length; i++) {
       //   console.log(`lastest ${this.index_}: ${i} - buffer[${i}]: ${this.byteString(buffer[i])} ${String.fromCharCode(buffer[i])} ${buffer[i]}`);
       // }
@@ -351,7 +351,7 @@ class Observer {
     }
     return ("000000000" + n.toString(2)).substr(-8);
   }
-  
+
   /**
    * Parse the buffer into a chunk and pass it on as either a message
    * or a set of trailers.
@@ -360,7 +360,7 @@ class Observer {
    */
   handleChunk(buffer) {
     let chunks = [];
-    
+
     try {
       chunks = this.parser_.parse(buffer);
       //console.warn('Parsed chunks: ' + chunks.length);
@@ -371,7 +371,7 @@ class Observer {
     }
 
     //console.warn("CHUNK", buffer, chunks);
-    
+
     chunks.forEach(chunk => {
       if (chunk.isMessage()) {
         // console.warn("CHUNK MESSAGE", chunk);
@@ -442,36 +442,36 @@ class Observer {
   getGrpcStatusFromHttpStatus() {
     //console.log('Mapping HTTP status code to grpc status code: ' + this.xhr_.getStatus());
     switch (this.xhr_.getStatus()) {
-    case 0:
-      return GrpcStatus.INTERNAL;
-    case HttpStatus.OK: // 200
-      return GrpcStatus.OK;
-    case HttpStatus.BAD_REQUEST: // 400
-      return GrpcStatus.INVALID_ARGUMENT;
-    case HttpStatus.UNAUTHORIZED: // 401
-      return GrpcStatus.UNAUTHENTICATED;
-    case HttpStatus.FORBIDDEN: // 403
-      return GrpcStatus.PERMISSION_DENIED;
-    case HttpStatus.NOT_FOUND: // 404
-      return GrpcStatus.NOT_FOUND;
-    case HttpStatus.CONFLICT: // 409
-      return GrpcStatus.ABORTED;
-    case HttpStatus.PRECONDITION_FAILED: // 412
-      return GrpcStatus.FAILED_PRECONDITION;
-    case HttpStatus.TOO_MANY_REQUESTS: // 429
-      return GrpcStatus.RESOURCE_EXHAUSTED;
-    case 499:
-      return GrpcStatus.CANCELED;
-    case HttpStatus.INTERNAL_SERVER_ERROR: // 500
-      return GrpcStatus.UNKNOWN;
-    case HttpStatus.NOT_IMPLEMENTED: // 501
-      return GrpcStatus.UNIMPLEMENTED;
-    case HttpStatus.SERVICE_UNAVAILABLE: // 503
-      return GrpcStatus.UNAVAILABLE;
-    case HttpStatus.GATEWAY_TIMEOUT: // 504
-      return GrpcStatus.DEADLINE_EXCEEDED;
-    default:
-      return GrpcStatus.UNKNOWN;
+      case 0:
+        return GrpcStatus.INTERNAL;
+      case HttpStatus.OK: // 200
+        return GrpcStatus.OK;
+      case HttpStatus.BAD_REQUEST: // 400
+        return GrpcStatus.INVALID_ARGUMENT;
+      case HttpStatus.UNAUTHORIZED: // 401
+        return GrpcStatus.UNAUTHENTICATED;
+      case HttpStatus.FORBIDDEN: // 403
+        return GrpcStatus.PERMISSION_DENIED;
+      case HttpStatus.NOT_FOUND: // 404
+        return GrpcStatus.NOT_FOUND;
+      case HttpStatus.CONFLICT: // 409
+        return GrpcStatus.ABORTED;
+      case HttpStatus.PRECONDITION_FAILED: // 412
+        return GrpcStatus.FAILED_PRECONDITION;
+      case HttpStatus.TOO_MANY_REQUESTS: // 429
+        return GrpcStatus.RESOURCE_EXHAUSTED;
+      case 499:
+        return GrpcStatus.CANCELED;
+      case HttpStatus.INTERNAL_SERVER_ERROR: // 500
+        return GrpcStatus.UNKNOWN;
+      case HttpStatus.NOT_IMPLEMENTED: // 501
+        return GrpcStatus.UNIMPLEMENTED;
+      case HttpStatus.SERVICE_UNAVAILABLE: // 503
+        return GrpcStatus.UNAVAILABLE;
+      case HttpStatus.GATEWAY_TIMEOUT: // 504
+        return GrpcStatus.DEADLINE_EXCEEDED;
+      default:
+        return GrpcStatus.UNKNOWN;
     }
   }
 

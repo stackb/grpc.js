@@ -73,28 +73,34 @@ string Basename(const string s, const char sep)
             s.end()};
 }
 
-string ToUpperCamel(const std::vector<string>& words) {
-  string result;
-  for (size_t i = 0; i < words.size(); i++) {
-    string word = words[i];
-    if (word[0] >= 'a' && word[0] <= 'z') {
-      word[0] = (word[0] - 'a') + 'A';
+string ToUpperCamel(const std::vector<string> &words)
+{
+    string result;
+    for (size_t i = 0; i < words.size(); i++)
+    {
+        string word = words[i];
+        if (word[0] >= 'a' && word[0] <= 'z')
+        {
+            word[0] = (word[0] - 'a') + 'A';
+        }
+        result += word;
     }
-    result += word;
-  }
-  return result;
+    return result;
 }
 
-template<typename Out>
-void split(const string &s, char delim, Out result) {
+template <typename Out>
+void split(const string &s, char delim, Out result)
+{
     std::stringstream ss(s);
     string item;
-    while (std::getline(ss, item, delim)) {
+    while (std::getline(ss, item, delim))
+    {
         *(result++) = item;
     }
 }
 
-std::vector<string> split(const string &s, char delim) {
+std::vector<string> split(const string &s, char delim)
+{
     std::vector<string> elems;
     split(s, delim, std::back_inserter(elems));
     return elems;
@@ -102,11 +108,11 @@ std::vector<string> split(const string &s, char delim) {
 
 string CamelName(const string s, const char sep)
 {
-    std::vector<std::string> words= split(s, sep);    
+    std::vector<std::string> words = split(s, sep);
     return ToUpperCamel(words);
 }
 
-void die(const std::string& msg)
+void die(const std::string &msg)
 {
     std::cerr << msg << std::endl;
     exit(1);
@@ -383,21 +389,21 @@ void PrintServiceGetter(Printer *printer,
 {
     printer->Print(
         vars,
-	    "/**\n"
-	    " * @return {!$service_name$}\n"
-	    " */\n"
-	    "get$service_name$() {\n");
-	printer->Indent();
-	printer->Print(
-        vars, 
+        "/**\n"
+        " * @return {!$service_name$}\n"
+        " */\n"
+        "get$service_name$() {\n");
+    printer->Indent();
+    printer->Print(
+        vars,
         "return this.$service_name$_;\n");
-	printer->Outdent();
+    printer->Outdent();
     printer->Print("}\n");
 }
 
 class GrpcCodeGenerator : public CodeGenerator
 {
-  public:
+public:
     GrpcCodeGenerator() {}
     ~GrpcCodeGenerator() override {}
 
@@ -453,7 +459,7 @@ class GrpcCodeGenerator : public CodeGenerator
         printer.Print(vars, "const GrpcRejection = goog.require('grpc.Rejection');\n");
         printer.Print(vars, "const GrpcStatus = goog.require('grpc.Status');\n");
         printer.Print(vars, "const GoogPromise = goog.require('goog.Promise');\n");
-        printer.Print(vars, "const Observer = goog.require('grpc.stream.Observer');\n");
+        printer.Print(vars, "const Observer = goog.require('grpc.Observer');\n");
         printer.Print(vars, "const Transport = goog.require('grpc.Transport');\n");
         printer.Print(vars, "const UnaryCallObserver = goog.require('grpc.stream.observer.UnaryCallObserver');\n\n");
         printer.Print(vars, "const StreamingCallObserver = goog.require('grpc.stream.observer.StreamingCallObserver');\n\n");

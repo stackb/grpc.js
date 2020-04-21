@@ -5,6 +5,7 @@
 goog.module('grpc.transport.Fetch');
 
 const FetchObserver = goog.require('grpc.transport.fetch.Observer');
+const Options = goog.require('grpc.Options');
 const Transport = goog.require('grpc.Transport');
 
 
@@ -19,20 +20,20 @@ const Transport = goog.require('grpc.Transport');
 class Fetch {
 
   /**
-   * @param {!grpc.Options} options
-   */  
+   * @param {!Options} options
+   */
   constructor(options) {
-    /** @const @private @type{!grpc.Options} */
+    /** @const @private @type{!Options} */
     this.options_ = options;
   }
-  
+
   /**
    * @override
    */
   call(name, encoder, decoder, observer, opt_endpoint) {
     return new FetchObserver(this.options_, name, encoder, decoder, observer, opt_endpoint);
   }
-  
+
 }
 
 exports = Fetch;

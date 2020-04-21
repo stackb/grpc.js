@@ -1,5 +1,6 @@
 goog.module('grpc.stream.observer.StreamingCallObserver');
 
+const Resolver = goog.require('goog.promise.Resolver');
 const UnaryCallObserver = goog.require('grpc.stream.observer.UnaryCallObserver');
 
 
@@ -14,7 +15,7 @@ const UnaryCallObserver = goog.require('grpc.stream.observer.UnaryCallObserver')
 class StreamingCallObserver extends UnaryCallObserver {
 
   /**
-   * @param {!goog.promise.Resolver<?>} resolver
+   * @param {!Resolver<?>} resolver
    * @param {!function(T)} onMessage
    */
   constructor(resolver, onMessage) {

@@ -12,7 +12,8 @@ const GrpcStatus = goog.require('grpc.Status');
 const GrpcStreamRejection = goog.require('grpc.Rejection');
 const HttpStatus = goog.require('goog.net.HttpStatus');
 const JspbByteSource = goog.require('jspb.ByteSource');
-const StreamObserver = goog.require('grpc.stream.Observer');
+const JspbMessage = goog.require('jspb.Message');
+const StreamObserver = goog.require('grpc.Observer');
 const asserts = goog.require('goog.asserts');
 
 /**
@@ -25,9 +26,9 @@ class Observer {
   /**
    * @param {!GrpcOptions} options
    * @param {string} name
-   * @param {!function(!jspb.Message):!JspbByteSource} encoder A serializer function that can encode input messages.
-   * @param {!function(!JspbByteSource):!jspb.Message} decoder A serializer function that can decode output messages.
-   * @param {!StreamObserver<!jspb.Message>} observer
+   * @param {!function(!JspbMessage):!JspbByteSource} encoder A serializer function that can encode input messages.
+   * @param {!function(!JspbByteSource):!JspbMessage} decoder A serializer function that can decode output messages.
+   * @param {!StreamObserver<!JspbMessage>} observer
    * @param {?Endpoint=} opt_endpoint
    */
   constructor(options, name, encoder, decoder, observer, opt_endpoint) {
@@ -50,7 +51,7 @@ class Observer {
     /** @const @protected */
     this.observer = observer;
 
-     /** @const @private */
+    /** @const @private */
     this.endpoint_ = opt_endpoint;
 
     /** @const @private */
@@ -66,11 +67,11 @@ class Observer {
     this.headers = null;
 
     /**
-     * This is jspb.Message that will be pumped into this object as
+     * This is JspbMessage that will be pumped into this object as
      * input via the onNext method.
      *
      * @private
-     * @type {?jspb.Message}
+     * @type {?JspbMessage}
      */
     this.value_ = null;
 
@@ -81,7 +82,7 @@ class Observer {
      * return value of the gRPC call.  We start out in INTERNAL.
      *
      * @private
-     * @type {GrpcStatus}
+     * @type {!GrpcStatus}
      */
     this.status_ = GrpcStatus.INTERNAL;
 
@@ -111,15 +112,15 @@ class Observer {
   }
 
   /**
-   * @return {?jspb.Message}
+   * @return {?JspbMessage}
    */
   getValue() {
-      return this.value_;
+    return this.value_;
   }
 
   /**
    * @override
-   * @param {!jspb.Message} value
+   * @param {!JspbMessage} value
    */
   onNext(value) {
     if (this.status_ != GrpcStatus.INTERNAL) {
@@ -127,7 +128,7 @@ class Observer {
       return;
     }
 
-    if (goog.isDefAndNotNull(this.value_)) {
+    if (this.value_ != null) {
       this.reportError(GrpcStatus.UNIMPLEMENTED, 'Xhr observer goes not support multiple (streaming) requests to the server');
       return;
     }
@@ -174,7 +175,7 @@ class Observer {
   onCompleted() {
     if (this.status_ != GrpcStatus.INTERNAL) {
       this.reportError(GrpcStatus.FAILED_PRECONDITION, 'No more input is possible, observer has already completed with status code: ' + this.status_);
-      return ;
+      return;
     }
 
     // Switch to UNKNOWN status just before sending the request.
@@ -211,7 +212,7 @@ class Observer {
   /**
    * Relay an error.  This is a terminal event and releases the XHR/fetch.
    * @protected
-   * @param {GrpcStatus} status The error status to assign.
+   * @param {!GrpcStatus} status The error status to assign.
    * @param {string} message A human-readable string that explains the error.
    * @param {!Object<string,string>=} opt_headers Optional headers associated with the error.
    */
@@ -224,7 +225,7 @@ class Observer {
   /**
    * Set the observer grpc status code.
    * @protected
-   * @param {GrpcStatus} status The status to assign.
+   * @param {!GrpcStatus} status The status to assign.
    */
   setStatus(status) {
     this.status_ = asserts.assertNumber(status);
@@ -232,7 +233,7 @@ class Observer {
 
   /**
    * Get the current observer grpc status code.
-   * @return {GrpcStatus}
+   * @return {!GrpcStatus}
    */
   getStatus() {
     return this.status_;
@@ -241,10 +242,10 @@ class Observer {
 
   /**
    * Convert the protobuf encoded bytes to a grpc-request frame.
-   * @param {!jspb.Message} value
+   * @param {!JspbMessage} value
    * @return {!ArrayBufferView}
    */
-  frameRequest(value)  {
+  frameRequest(value) {
     const bytes = /** @type {!Uint8Array} */ (this.encoder_(value));
     const frame = new ArrayBuffer(bytes.byteLength + 5);
     new DataView(frame, 1, 4).setUint32(0, bytes.length, false /* big endian */);
@@ -327,36 +328,36 @@ class Observer {
   getGrpcStatusFromHttpStatus(status) {
     // console.log(`Mapping HTTP status code ${status} to grpc status code`);
     switch (status) {
-    case 0:
-      return GrpcStatus.INTERNAL;
-    case HttpStatus.OK: // 200
-      return GrpcStatus.OK;
-    case HttpStatus.BAD_REQUEST: // 400
-      return GrpcStatus.INVALID_ARGUMENT;
-    case HttpStatus.UNAUTHORIZED: // 401
-      return GrpcStatus.UNAUTHENTICATED;
-    case HttpStatus.FORBIDDEN: // 403
-      return GrpcStatus.PERMISSION_DENIED;
-    case HttpStatus.NOT_FOUND: // 404
-      return GrpcStatus.NOT_FOUND;
-    case HttpStatus.CONFLICT: // 409
-      return GrpcStatus.ABORTED;
-    case HttpStatus.PRECONDITION_FAILED: // 412
-      return GrpcStatus.FAILED_PRECONDITION;
-    case HttpStatus.TOO_MANY_REQUESTS: // 429
-      return GrpcStatus.RESOURCE_EXHAUSTED;
-    case 499:
-      return GrpcStatus.CANCELED;
-    case HttpStatus.INTERNAL_SERVER_ERROR: // 500
-      return GrpcStatus.UNKNOWN;
-    case HttpStatus.NOT_IMPLEMENTED: // 501
-      return GrpcStatus.UNIMPLEMENTED;
-    case HttpStatus.SERVICE_UNAVAILABLE: // 503
-      return GrpcStatus.UNAVAILABLE;
-    case HttpStatus.GATEWAY_TIMEOUT: // 504
-      return GrpcStatus.DEADLINE_EXCEEDED;
-    default:
-      return GrpcStatus.UNKNOWN;
+      case 0:
+        return GrpcStatus.INTERNAL;
+      case HttpStatus.OK: // 200
+        return GrpcStatus.OK;
+      case HttpStatus.BAD_REQUEST: // 400
+        return GrpcStatus.INVALID_ARGUMENT;
+      case HttpStatus.UNAUTHORIZED: // 401
+        return GrpcStatus.UNAUTHENTICATED;
+      case HttpStatus.FORBIDDEN: // 403
+        return GrpcStatus.PERMISSION_DENIED;
+      case HttpStatus.NOT_FOUND: // 404
+        return GrpcStatus.NOT_FOUND;
+      case HttpStatus.CONFLICT: // 409
+        return GrpcStatus.ABORTED;
+      case HttpStatus.PRECONDITION_FAILED: // 412
+        return GrpcStatus.FAILED_PRECONDITION;
+      case HttpStatus.TOO_MANY_REQUESTS: // 429
+        return GrpcStatus.RESOURCE_EXHAUSTED;
+      case 499:
+        return GrpcStatus.CANCELED;
+      case HttpStatus.INTERNAL_SERVER_ERROR: // 500
+        return GrpcStatus.UNKNOWN;
+      case HttpStatus.NOT_IMPLEMENTED: // 501
+        return GrpcStatus.UNIMPLEMENTED;
+      case HttpStatus.SERVICE_UNAVAILABLE: // 503
+        return GrpcStatus.UNAVAILABLE;
+      case HttpStatus.GATEWAY_TIMEOUT: // 504
+        return GrpcStatus.DEADLINE_EXCEEDED;
+      default:
+        return GrpcStatus.UNKNOWN;
     }
   }
 
