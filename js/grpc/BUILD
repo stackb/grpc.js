@@ -11,6 +11,7 @@ closure_js_library(
     name = "grpc",
     srcs = [
         "transport.js",
+        "observer.js",
         "rejection.js",
         "status.js",
         "endpoint.js",

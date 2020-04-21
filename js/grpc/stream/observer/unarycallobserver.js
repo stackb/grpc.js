@@ -3,7 +3,8 @@ goog.module('grpc.stream.observer.UnaryCallObserver');
 const EventTarget = goog.require('goog.events.EventTarget');
 const EventType = goog.require('grpc.stream.observer.EventType');
 const GrpcStatus = goog.require('grpc.Status');
-const Observer = goog.require('grpc.stream.Observer');
+const Observer = goog.require('grpc.Observer');
+const Resolver = goog.require('goog.promise.Resolver');
 
 
 /**
@@ -19,15 +20,15 @@ const Observer = goog.require('grpc.stream.Observer');
 class UnaryCallObserver extends EventTarget {
 
   /**
-   * @param {!goog.promise.Resolver<T>} resolver
+   * @param {!Resolver<T>} resolver
    */
   constructor(resolver) {
     super();
 
-    /** @protected @type {!goog.promise.Resolver<T>} */
+    /** @protected */
     this.resolver = resolver;
 
-    /** @private @type {GrpcStatus|undefined} */
+    /** @private @type {?GrpcStatus|undefined} */
     this.status_ = undefined;
 
     /** @private @type {string|undefined} */
@@ -83,18 +84,18 @@ class UnaryCallObserver extends EventTarget {
   /**
    * @override
    * @param {!Object<string,string>} headers Headers
-   * @param {GrpcStatus} status Current grpcStatus code
+   * @param {!GrpcStatus} status Current grpcStatus code
    * @param {boolean=} opt_isTrailing Flag set if these are Trailers
    */
   onProgress(headers, status, opt_isTrailing) {
     // console.warn("onProgress: ", status + " HEADERS: " + opt_isTrailing, headers);
     const grpcStatus = this.getGrpcStatus(headers);
     //console.warn("onProgress grpcStatus: ", grpcStatus);
-    if (goog.isDefAndNotNull(grpcStatus)) {
+    if (grpcStatus != null) {
       this.status_ = grpcStatus;
     }
     const grpcMessage = this.getGrpcMessage(headers);
-    if (goog.isDefAndNotNull(grpcMessage)) {
+    if (grpcMessage != null) {
       this.message_ = grpcMessage;
     }
     if (opt_isTrailing) {
@@ -163,16 +164,16 @@ class UnaryCallObserver extends EventTarget {
   /**
    * @protected
    * @param {?Object<string,string>} headers
-   * @return {GrpcStatus|undefined}
+   * @return {!GrpcStatus|undefined}
    */
   getGrpcStatus(headers) {
     if (headers) {
       try {
         let grpcStatus = headers["Grpc-Status"];
-        if (!goog.isDefAndNotNull(grpcStatus)) {
+        if (grpcStatus == null) {
           grpcStatus = headers["grpc-status"];
         }
-        if (!goog.isDefAndNotNull(grpcStatus)) {
+        if (grpcStatus == null) {
           return undefined;
         }
         const statusCode = /** @type {!GrpcStatus} */ (parseInt(grpcStatus, 10));

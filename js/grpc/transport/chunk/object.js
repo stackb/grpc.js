@@ -52,7 +52,7 @@ class Chunk {
    * @return {boolean}
    */
   isMessage() {
-    return goog.isDefAndNotNull(this.data_);
+    return this.data_ != null;
   }
 
 }

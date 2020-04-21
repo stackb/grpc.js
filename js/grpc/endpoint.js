@@ -2,7 +2,7 @@
  * @fileoverview grpc Transport interface.
  *
  */
-goog.provide('grpc.Endpoint');
+goog.module('grpc.Endpoint');
 
 
 /**
@@ -16,4 +16,7 @@ goog.provide('grpc.Endpoint');
     port:(number|undefined),
   }}
  */
-grpc.Endpoint;
+var Endpoint;
+
+
+exports = Endpoint;

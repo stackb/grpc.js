@@ -17,22 +17,22 @@ class Rejection {
   constructor(message, status, headers, trailers) {
 
     /**
-     * @public @const @type {string}
+     * @public @const
      */
     this.message = message;
 
     /**
-     * @public @const @type {GrpcStatus}
+     * @public @const
      */
     this.status = status;
 
     /**
-     * @public @const @type {!Object<string,string>}
+     * @public @const
      */
     this.headers = headers;
 
     /**
-     * @public @const @type {!Object<string,string>}
+     * @public @const
      */
     this.trailers = trailers;
 

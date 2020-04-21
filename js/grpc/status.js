@@ -1,10 +1,10 @@
-goog.provide('grpc.Status');
+goog.module('grpc.Status');
 
 /**
  * @public
  * @enum {number}
  */
-grpc.Status = {
+exports = {
   OK: 0,
   CANCELED: 1,
   UNKNOWN: 2,

@@ -1,4 +1,7 @@
-goog.provide('grpc.stream.Observer');
+goog.module('grpc.Observer');
+
+const Rejection = goog.require('grpc.Rejection');
+const Status = goog.require('grpc.Status');
 
 
 /**
@@ -8,7 +11,7 @@ goog.provide('grpc.stream.Observer');
  * @interface
  * @template T
  */
-grpc.stream.Observer = function() {};
+const Observer = function () { };
 
 
 /**
@@ -16,10 +19,10 @@ grpc.stream.Observer = function() {};
  * header or trailer key:values as they arrive on the stream.
  *
  * @param {!Object<string,string>} headers Headers
- * @param {grpc.Status} status Current grpcStatus code
+ * @param {!Status} status Current grpcStatus code
  * @param {boolean=} opt_isTrailing Flag set if these are Trailers
  */
-grpc.stream.Observer.prototype.onProgress = function(headers, status, opt_isTrailing) {};
+Observer.prototype.onProgress = function (headers, status, opt_isTrailing) { };
 
 
 /**
@@ -27,18 +30,20 @@ grpc.stream.Observer.prototype.onProgress = function(headers, status, opt_isTrai
  *
  * @param {T} value The protobuf value
  */
-grpc.stream.Observer.prototype.onNext = function(value) {};
+Observer.prototype.onNext = function (value) { };
 
 
 /**
  * Error value callback for a stream.
  *
- * @param {!grpc.Rejection} err A struct with the status code, message, and headers that detail the error.
+ * @param {!Rejection} err A struct with the status code, message, and headers that detail the error.
  */
-grpc.stream.Observer.prototype.onError = function(err) {};
+Observer.prototype.onError = function (err) { };
 
 
 /**
  * Stream termination callback.
  */
-grpc.stream.Observer.prototype.onCompleted = function() {};
+Observer.prototype.onCompleted = function () { };
+
+exports = Observer;

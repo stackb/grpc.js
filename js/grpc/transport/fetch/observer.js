@@ -9,7 +9,7 @@ const Endpoint = goog.require('grpc.Endpoint');
 const GrpcOptions = goog.require('grpc.Options');
 const GrpcStatus = goog.require('grpc.Status');
 const JspbByteSource = goog.require('jspb.ByteSource');
-const StreamObserver = goog.require('grpc.stream.Observer');
+const StreamObserver = goog.require('grpc.Observer');
 const asserts = goog.require('goog.asserts');
 const objects = goog.require('goog.object');
 
@@ -39,7 +39,7 @@ class Observer extends BaseObserver {
    */
   constructor(options, name, encoder, decoder, observer, opt_endpoint) {
     super(options, name, encoder, decoder, observer, opt_endpoint);
-    
+
     /**
      * Cancellation flag
      * @private @type {boolean}
@@ -87,9 +87,9 @@ class Observer extends BaseObserver {
         headers.append(key, val);
       });
     }
-    
+
     // Headers for this call
-    if (goog.isDefAndNotNull(this.headers)) {
+    if (this.headers != null) {
       objects.forEach(this.headers, (/** string */val, /** string */key) => {
         headers.append(key, val);
       });
@@ -167,7 +167,7 @@ class Observer extends BaseObserver {
     }
     if (this.cancelled_) {
       // console.warn("pump: observation cancelled, aborting");
-      reader.cancel("Observation previously cancelled.");      
+      reader.cancel("Observation previously cancelled.");
       return;
     }
 
@@ -231,7 +231,7 @@ class Observer extends BaseObserver {
   getGrpcStatusFromHeaders(headers) {
     try {
       const grpcStatus = headers.get("Grpc-Status");
-      if (!goog.isDefAndNotNull(grpcStatus)) {
+      if (grpcStatus == null) {
         return null;
       }
       const statusCode = /** @type {!GrpcStatus} */ (parseInt(grpcStatus, 10));

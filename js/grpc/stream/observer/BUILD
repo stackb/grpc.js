@@ -17,7 +17,6 @@ closure_js_library(
     ],
     deps = [
         "//js/grpc",
-        "//js/grpc/stream:observer",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
