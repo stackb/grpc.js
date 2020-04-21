@@ -6,6 +6,6 @@ cc_binary(
         "protoc-gen-grpc-js.cc",
     ],
     deps = [
-        "@com_google_protobuf//:protoc_lib"
+        "@com_google_protobuf//:protoc_lib",
     ],
 )

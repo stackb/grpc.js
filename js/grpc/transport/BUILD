@@ -69,23 +69,22 @@ closure_js_library(
     ],
 )
 
-
 closure_js_test(
     name = "xhr_test",
     srcs = [
         "xhr/observer_test.js",
+    ],
+    entry_points = ["goog:grpc.transport.xhr.ObserverTest"],
+    suppress = [
+        "JSC_INVALID_CAST",
     ],
     deps = [
         ":xhr",
         "//js/grpc",
         "//js/grpc:options",
         "@io_bazel_rules_closure//closure/library",
-        "@io_bazel_rules_closure//closure/library/ui:component",
         "@io_bazel_rules_closure//closure/library:testing",
+        "@io_bazel_rules_closure//closure/library/ui:component",
         "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
-    suppress = [
-        "JSC_INVALID_CAST",
-    ],
-    entry_points = ["goog:grpc.transport.xhr.ObserverTest"],
 )

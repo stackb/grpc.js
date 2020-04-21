@@ -10,11 +10,11 @@ load(
 closure_js_library(
     name = "grpc",
     srcs = [
-        "transport.js",
+        "endpoint.js",
         "observer.js",
         "rejection.js",
         "status.js",
-        "endpoint.js",
+        "transport.js",
     ],
     deps = [
         "@io_bazel_rules_closure//closure/library",
@@ -30,8 +30,8 @@ closure_js_library(
     deps = [
         ":grpc",
         ":options",
-        "//js/grpc/transport:xhr",
         "//js/grpc/transport:fetch",
+        "//js/grpc/transport:xhr",
         "@io_bazel_rules_closure//closure/library",
         "@io_bazel_rules_closure//closure/library/labs/useragent:browser",
     ],
