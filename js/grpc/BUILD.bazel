@@ -31,6 +31,7 @@ closure_js_library(
         ":grpc",
         ":options",
         "//js/grpc/transport:fetch",
+        "//js/grpc/transport:websocket",
         "//js/grpc/transport:xhr",
         "@io_bazel_rules_closure//closure/library",
         "@io_bazel_rules_closure//closure/library/labs/useragent:browser",

@@ -4,7 +4,7 @@ const FetchTransport = goog.require('grpc.transport.Fetch');
 const GrpcEndpoint = goog.require('grpc.Endpoint');
 const GrpcOptions = goog.require('grpc.Options');
 const Transport = goog.require('grpc.Transport');
-const WebsocketTransport = goog.require('grpc.transport.Websocket');
+const WebSocketTransport = goog.require('grpc.transport.WebSocket');
 const XhrTransport = goog.require('grpc.transport.Xhr');
 const browser = goog.require('goog.labs.userAgent.browser');
 
@@ -31,7 +31,7 @@ class Api {
      * @type {!Transport}
      */
     this.transport_ = opt_transport || (
-      fetchSupported() ? new FetchTransport(this.options_) : new XhrTransport(options_));
+      fetchSupported() ? new FetchTransport(this.options_) : new XhrTransport(this.options_));
   }
 
   /**
@@ -49,6 +49,7 @@ class Api {
   /**
    * Returns a transport by name.
    * @param {string} name 
+   * @return {!Transport}
    */
   getTransportByName(name) {
     switch (name) {
@@ -57,7 +58,7 @@ class Api {
       case 'xhr':
         return new XhrTransport(this.options_);
       case 'websocket':
-        return new WebsocketTransport(this.options_);
+        return new WebSocketTransport(this.options_);
       default:
         throw new Error(`unknown transport name: ${name}`);
     }

@@ -397,7 +397,7 @@ namespace grpc
                     "/** @type {!function(!$in$):!jspb.ByteSource} */ (m => m.serializeBinary()),\n"
                     "$out$.deserializeBinary,\n"
                     "observer,\n"
-                    "opt_endpoint);\n");
+                    "opt_endpoint || { transport: 'websocket' });\n");
                 printer->Outdent();
                 printer->Print(
                     vars,
@@ -420,9 +420,9 @@ namespace grpc
                 printer->Indent();
                 printer->Print(
                     vars,
-                    "/** @type{!goog.promise.Resolver<void>} */\n"
+                    "/** @type{!goog.promise.Resolver<!$out$>} */\n"
                     "const resolver = GoogPromise.withResolver();\n"
-                    "const observer = new StreamingCallObserver(resolver);\n"
+                    "const observer = new UnaryCallObserver(resolver);\n"
                     "const input = this.$js_method_name$Observation(observer, opt_headers, opt_endpoint);\n"
                     "return { input: input, promise: resolver.promise };\n");
                 printer->Outdent();
@@ -453,7 +453,7 @@ namespace grpc
                     "/** @type {!function(!$in$):!jspb.ByteSource} */ (m => m.serializeBinary()),\n"
                     "$out$.deserializeBinary,\n"
                     "observer,\n"
-                    "opt_endpoint);\n");
+                    "opt_endpoint || { transport: 'websocket' });\n");
                 printer->Outdent();
                 printer->Print(
                     vars,
@@ -473,14 +473,14 @@ namespace grpc
                     " * @param {?GrpcEndpoint=} opt_endpoint\n"
                     " * @return { { input: !Observer<!$in$>, promise: !GoogPromise<void,!GrpcRejection> } }\n"
                     " */\n"
-                    "$js_method_name$(request, onMessage, opt_headers, opt_endpoint) {\n");
+                    "$js_method_name$(onMessage, opt_headers, opt_endpoint) {\n");
                 printer->Indent();
                 printer->Print(
                     vars,
                     "/** @type{!goog.promise.Resolver<void>} */\n"
                     "const resolver = GoogPromise.withResolver();\n"
                     "const observer = new StreamingCallObserver(resolver, onMessage);\n"
-                    "const input = this.$js_method_name$Observation(observer, request, opt_headers, opt_endpoint);\n"
+                    "const input = this.$js_method_name$Observation(observer, opt_headers, opt_endpoint);\n"
                     "return { input: input, promise: resolver.promise };\n");
                 printer->Outdent();
                 printer->Print("}\n\n");

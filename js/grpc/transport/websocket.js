@@ -2,22 +2,22 @@
  * @fileoverview Websocket transport implementation.
  *
  */
-goog.module('grpc.transport.Fetch');
+goog.module('grpc.transport.WebSocket');
 
-const WebsocketObserver = goog.require('grpc.transport.websocket.Observer');
+const Observer = goog.require('grpc.transport.websocket.Observer');
 const Options = goog.require('grpc.Options');
 const Transport = goog.require('grpc.Transport');
 
 
 /**
- * Transport implementation that uses the Fetch API.
+ * Transport implementation that uses the WebSocket API.
  *
  * @struct
  * @implements {Transport}
  * @template T
  * @template E
  */
-class Fetch {
+class WebSocket {
 
   /**
    * @param {!Options} options
@@ -31,9 +31,9 @@ class Fetch {
    * @override
    */
   call(name, encoder, decoder, observer, opt_endpoint) {
-    return new WebsocketObserver(this.options_, name, encoder, decoder, observer, opt_endpoint);
+    return new Observer(this.options_, name, encoder, decoder, observer, opt_endpoint);
   }
 
 }
 
-exports = Fetch;
+exports = WebSocket;

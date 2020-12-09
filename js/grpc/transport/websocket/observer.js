@@ -2,16 +2,15 @@
  * @fileoverview Websocket transport observer implementation.
  *
  */
-goog.module('grpc.transport.Websocket.Observer');
+goog.module('grpc.transport.websocket.Observer');
 
 const BaseObserver = goog.require('grpc.transport.BaseObserver');
 const Endpoint = goog.require('grpc.Endpoint');
 const GrpcOptions = goog.require('grpc.Options');
 const GrpcStatus = goog.require('grpc.Status');
-const GoogNetWebsocket = goog.require('goog.net.Websocket');
+const GoogNetWebSocket = goog.require('goog.net.WebSocket');
 const JspbByteSource = goog.require('jspb.ByteSource');
 const StreamObserver = goog.require('grpc.Observer');
-const asserts = goog.require('goog.asserts');
 const objects = goog.require('goog.object');
 const { encodeASCII } = goog.require('grpc.chunk.Parser');
 
@@ -48,17 +47,17 @@ class Observer extends BaseObserver {
 
     /**
      * The websocket instance
-     * @private @type {!GoogNetWebsocket}
+     * @private @type {!GoogNetWebSocket}
      */
-    this.websocket_ = new GoogNetWebsocket({
-      binaryType: GoogNetWebsocket.BinaryType.ARRAY_BUFFER,
+    this.websocket_ = new GoogNetWebSocket({
+      binaryType: GoogNetWebSocket.BinaryType.ARRAY_BUFFER,
     });
 
     this.getHandler()
-      .listen(this.websocket_, GoogNetWebsocket.EventType.OPENED, this.handleWebsocketOpened)
-      .listen(this.websocket_, GoogNetWebsocket.EventType.MESSAGE, this.handleWebsocketMessage)
-      .listen(this.websocket_, GoogNetWebsocket.EventType.CLOSED, this.handleWebsocketClosed)
-      .listen(this.websocket_, GoogNetWebsocket.EventType.ERROR, this.handleWebsocketError);
+      .listen(this.websocket_, GoogNetWebSocket.EventType.OPENED, this.handleWebsocketOpened)
+      .listen(this.websocket_, GoogNetWebSocket.EventType.MESSAGE, this.handleWebsocketMessage)
+      .listen(this.websocket_, GoogNetWebSocket.EventType.CLOSED, this.handleWebsocketClosed)
+      .listen(this.websocket_, GoogNetWebSocket.EventType.ERROR, this.handleWebsocketError);
 
     // using grpc-web 'grpc-websockets' subprotocol from
     // https://github.com/improbable-eng/grpc-web/blob/cd3cae9a5c1c1f4ea7b15ce13e976cf74d8b954c/client/grpc-web/src/transports/websocket/websocket.ts#L56
@@ -72,7 +71,7 @@ class Observer extends BaseObserver {
   onNext(request) {
     super.onNext(request);
 
-    this.sendFrame(this.frameRequest(request));
+    this.sendFrame(new Uint8Array(this.frameRequest(request)));
   }
 
   /**
@@ -118,10 +117,11 @@ class Observer extends BaseObserver {
   }
 
   /**
-   * @param {!GoogNetWebsocket.MessageEvent} e 
+   * @param {!GoogNetWebSocket.MessageEvent} e 
+   * @suppress {reportUnknownTypes} compiler cannot figure out 'e' type?
    */
   handleWebsocketMessage(e) {
-    this.handleChunk(asserts.assertObject(/** @type {!Uint8Array} */(e.message)));
+    this.handleChunk(new Uint8Array(/** @type {!ArrayBuffer} */(e.message)));
   }
 
   /**
@@ -132,7 +132,7 @@ class Observer extends BaseObserver {
   }
 
   /**
-   * @param {!GoogNetWebsocket.ErrorEvent} e 
+   * @param {!GoogNetWebSocket.ErrorEvent} e 
    */
   handleWebsocketError(e) {
     if (this.cancelled_) {
@@ -174,9 +174,9 @@ class Observer extends BaseObserver {
    */
   dispose() {
     super.dispose();
-    
+
     this.websocket_.dispose();
-    this.websocket_ = null;
+    delete this.websocket_;
   }
 
 }
@@ -184,14 +184,14 @@ exports = Observer;
 
 
 /**
- * 
+ * Convert headers to ascii-encoded string
  * @param {!Headers} headers
  * @returns {!Uint8Array}
  */
 function headersToBytes(headers) {
-  let asString = "";
-  headers.forEach((key, values) => {
-    asString += `${key}: ${values.join(", ")}\r\n`;
-  });
-  return encodeASCII(asString);
+  let buf = '';
+  for (const entry of headers.entries()) {
+    buf += `${entry[0]}: ${entry[1]}\r\n`;
+  }
+  return encodeASCII(buf);
 }
