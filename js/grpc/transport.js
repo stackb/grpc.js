@@ -23,9 +23,10 @@ const Transport = function () { };
  * @param {string} name The name of the procedure to call
  * @param {!function(INPUT):!ByteSource} encoder A serializer function that can encode input messages.
  * @param {!function(!ByteSource):OUTPUT} decoder A serializer function that can decode output messages.
- * @param {!Observer<OUTPUT>} observer An observer used to recieve events.
+ * @param {!Observer<OUTPUT>} observer An observer used to recieve responses.
  * @param {?Endpoint=} opt_endpoint Optional additional endpoint configuration.
- * @return {!Observer<INPUT>} The input observer that the caller should provide events to.
+ * @return {!Observer<INPUT>} The input observer that the caller should supply
+ * with requests.
  * @template INPUT
  * @template OUTPUT
  */

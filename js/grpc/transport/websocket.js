@@ -1,10 +1,10 @@
 /**
- * @fileoverview Fetch transport implementation.
+ * @fileoverview Websocket transport implementation.
  *
  */
 goog.module('grpc.transport.Fetch');
 
-const FetchObserver = goog.require('grpc.transport.fetch.Observer');
+const WebsocketObserver = goog.require('grpc.transport.websocket.Observer');
 const Options = goog.require('grpc.Options');
 const Transport = goog.require('grpc.Transport');
 
@@ -31,7 +31,7 @@ class Fetch {
    * @override
    */
   call(name, encoder, decoder, observer, opt_endpoint) {
-    return new FetchObserver(this.options_, name, encoder, decoder, observer, opt_endpoint);
+    return new WebsocketObserver(this.options_, name, encoder, decoder, observer, opt_endpoint);
   }
 
 }
