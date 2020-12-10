@@ -69,6 +69,23 @@ closure_js_library(
     ],
 )
 
+closure_js_library(
+    name = "websocket",
+    srcs = [
+        "websocket.js",
+        "websocket/observer.js",
+    ],
+    deps = [
+        ":base_observer",
+        "//js/grpc",
+        "//js/grpc:options",
+        "//js/grpc/transport/chunk",
+        "@io_bazel_rules_closure//closure/library",
+        "@io_bazel_rules_closure//closure/library/net:websocket",
+        "@io_bazel_rules_closure//closure/protobuf:jspb",
+    ],
+)
+
 closure_js_test(
     name = "xhr_test",
     srcs = [

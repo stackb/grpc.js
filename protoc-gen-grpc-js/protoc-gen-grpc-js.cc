@@ -273,7 +273,7 @@ namespace grpc
                 printer->Indent();
                 printer->Print(
                     vars,
-                    "const input = this.api_.getTransport().call(\n");
+                    "const input = this.api_.getTransport(opt_endpoint).call(\n");
                 printer->Indent();
                 printer->Print(
                     vars,
@@ -330,7 +330,7 @@ namespace grpc
                     " */\n"
                     "$js_method_name$Observation(observer, request, opt_headers, opt_endpoint) {\n");
                 printer->Indent();
-                printer->Print("const input = this.api_.getTransport().call(\n");
+                printer->Print("const input = this.api_.getTransport(opt_endpoint).call(\n");
                 printer->Indent();
                 printer->Print(
                     vars,
@@ -369,6 +369,119 @@ namespace grpc
                     "const observer = new StreamingCallObserver(resolver, onMessage);\n"
                     "this.$js_method_name$Observation(observer, request, opt_headers, opt_endpoint);\n"
                     "return resolver.promise;\n");
+                printer->Outdent();
+                printer->Print("}\n\n");
+            }
+
+            void PrintClientStreamingCall(Printer *printer, std::map<string, string> vars)
+            {
+                printer->Print(
+                    vars,
+                    "\n"
+                    "/**\n"
+                    " * Client streaming observation of $package$.$service_name$/$method_name$.\n"
+                    " *\n"
+                    " * @param {!Observer<!$out$>} observer\n"
+                    " * @param {?Object<string,string>=} opt_headers\n"
+                    " * @param {?GrpcEndpoint=} opt_endpoint\n"
+                    " * @returns {!Observer<!$in$>}\n"
+                    " * @suppress {reportUnknownTypes}\n"
+                    " */\n"
+                    "$js_method_name$Observation(observer, opt_headers, opt_endpoint) {\n");
+                printer->Indent();
+                printer->Print("const input = this.api_.getTransport(opt_endpoint).call(\n");
+                printer->Indent();
+                printer->Print(
+                    vars,
+                    "'$package$.$service_name$/$method_name$',\n"
+                    "/** @type {!function(!$in$):!jspb.ByteSource} */ (m => m.serializeBinary()),\n"
+                    "$out$.deserializeBinary,\n"
+                    "observer,\n"
+                    "opt_endpoint || { transport: 'websocket' });\n");
+                printer->Outdent();
+                printer->Print(
+                    vars,
+                    "if (opt_headers) { input.onProgress(opt_headers, GrpcStatus.OK); }\n"
+                    "return input;\n");
+                printer->Outdent();
+                printer->Print("}\n");
+
+                printer->Print(
+                    vars,
+                    "\n"
+                    "/**\n"
+                    " * $service_name$.$method_name$ method (as a promise).\n"
+                    " *\n"
+                    " * @param {?Object<string,string>=} opt_headers\n"
+                    " * @param {?GrpcEndpoint=} opt_endpoint\n"
+                    " * @return { { input: Observer<!$in$>, promise: !GoogPromise<void,!GrpcRejection> } }\n"
+                    " */\n"
+                    "$js_method_name$(onRequest, opt_headers, opt_endpoint) {\n");
+                printer->Indent();
+                printer->Print(
+                    vars,
+                    "/** @type{!goog.promise.Resolver<!$out$>} */\n"
+                    "const resolver = GoogPromise.withResolver();\n"
+                    "const observer = new UnaryCallObserver(resolver);\n"
+                    "const input = this.$js_method_name$Observation(observer, opt_headers, opt_endpoint);\n"
+                    "return { input: input, promise: resolver.promise };\n");
+                printer->Outdent();
+                printer->Print("}\n\n");
+            }
+
+            void PrintBidiStreamingCall(Printer *printer, std::map<string, string> vars)
+            {
+                printer->Print(
+                    vars,
+                    "\n"
+                    "/**\n"
+                    " * Bidi streaming observation of $package$.$service_name$/$method_name$.\n"
+                    " *\n"
+                    " * @param {!Observer<!$out$>} observer\n"
+                    " * @param {?Object<string,string>=} opt_headers\n"
+                    " * @param {?GrpcEndpoint=} opt_endpoint\n"
+                    " * @returns {!Observer<!$in$>}\n"
+                    " * @suppress {reportUnknownTypes}\n"
+                    " */\n"
+                    "$js_method_name$Observation(observer, opt_headers, opt_endpoint) {\n");
+                printer->Indent();
+                printer->Print("const input = this.api_.getTransport(opt_endpoint).call(\n");
+                printer->Indent();
+                printer->Print(
+                    vars,
+                    "'$package$.$service_name$/$method_name$',\n"
+                    "/** @type {!function(!$in$):!jspb.ByteSource} */ (m => m.serializeBinary()),\n"
+                    "$out$.deserializeBinary,\n"
+                    "observer,\n"
+                    "opt_endpoint || { transport: 'websocket' });\n");
+                printer->Outdent();
+                printer->Print(
+                    vars,
+                    "if (opt_headers) { input.onProgress(opt_headers, GrpcStatus.OK); }\n"
+                    "return input;\n");
+                printer->Outdent();
+                printer->Print("}\n");
+
+                printer->Print(
+                    vars,
+                    "\n"
+                    "/**\n"
+                    " * $service_name$.$method_name$ method (as a promise).\n"
+                    " *\n"
+                    " * @param {!function(!$out$)} onMessage\n"
+                    " * @param {?Object<string,string>=} opt_headers\n"
+                    " * @param {?GrpcEndpoint=} opt_endpoint\n"
+                    " * @return { { input: !Observer<!$in$>, promise: !GoogPromise<void,!GrpcRejection> } }\n"
+                    " */\n"
+                    "$js_method_name$(onMessage, opt_headers, opt_endpoint) {\n");
+                printer->Indent();
+                printer->Print(
+                    vars,
+                    "/** @type{!goog.promise.Resolver<void>} */\n"
+                    "const resolver = GoogPromise.withResolver();\n"
+                    "const observer = new StreamingCallObserver(resolver, onMessage);\n"
+                    "const input = this.$js_method_name$Observation(observer, opt_headers, opt_endpoint);\n"
+                    "return { input: input, promise: resolver.promise };\n");
                 printer->Outdent();
                 printer->Print("}\n\n");
             }
@@ -490,8 +603,18 @@ namespace grpc
                             vars["in"] = CamelName(method->input_type()->full_name(), '.');
                             vars["out"] = CamelName(method->output_type()->full_name(), '.');
 
-                            // Client streaming is not supported yet
-                            if (!method->client_streaming())
+                            if (method->client_streaming())
+                            {
+                                if (method->server_streaming())
+                                {
+                                    PrintBidiStreamingCall(&printer, vars);
+                                }
+                                else
+                                {
+                                    PrintClientStreamingCall(&printer, vars);
+                                }
+                            }
+                            else
                             {
                                 if (method->server_streaming())
                                 {

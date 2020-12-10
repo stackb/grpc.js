@@ -215,4 +215,40 @@ function hasEnoughBytes(buffer, position, byteCount) {
   return buffer.byteLength - position >= byteCount;
 }
 
-exports = { Parser, parseHeaders };
+/**
+ * A validation function.
+ * 
+ * @param {number} char
+ * @returns {boolean} 
+ */
+function isAllowedControlChars(char) {
+  return char === 0x9 || char === 0xa || char === 0xd;
+}
+
+/**
+ * @param {number} val
+ * @returns {boolean} 
+ */
+function isValidHeaderAscii(val) {
+  return isAllowedControlChars(val) || (val >= 0x20 && val <= 0x7e);
+}
+
+/**
+ * Encode the string in ascii as a uint8array.
+ * 
+ * @param {string} input
+ * @returns {!Uint8Array} 
+ */
+function encodeASCII(input) {
+  const encoded = new Uint8Array(input.length);
+  for (let i = 0; i !== input.length; ++i) {
+    const charCode = input.charCodeAt(i);
+    if (!isValidHeaderAscii(charCode)) {
+      throw new Error("Metadata contains invalid ASCII");
+    }
+    encoded[i] = charCode;
+  }
+  return encoded;
+}
+
+exports = { Parser, parseHeaders, encodeASCII };

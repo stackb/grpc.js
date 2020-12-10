@@ -103,7 +103,6 @@ class Observer {
     this.complete_ = false;
   }
 
-
   /**
    * @override
    */
@@ -239,6 +238,12 @@ class Observer {
     return this.status_;
   }
 
+  /**
+   * @returns {!EventHandler}
+   */
+  getHandler() {
+    return this.handler_;
+  }
 
   /**
    * Convert the protobuf encoded bytes to a grpc-request frame.
@@ -254,7 +259,6 @@ class Observer {
     //console.log("frameRequestData: " + data.toString());
     return data;
   }
-
 
   /**
    * Convert the raw string to an ArrayBuffer
