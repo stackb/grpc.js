@@ -41,18 +41,18 @@ class Api {
    */
   getTransport(opt_endpoint) {
     if (opt_endpoint && opt_endpoint.transport) {
-      return this.getTransportByName(opt_endpoint.transport);
+      return this.getTransportByType(/** @type {!Transport.Type } */(opt_endpoint.transport));
     } 
     return this.transport_;
   }
 
   /**
    * Returns a transport by name.
-   * @param {string} name 
+   * @param {!Transport.Type} type 
    * @return {!Transport}
    */
-  getTransportByName(name) {
-    switch (name) {
+  getTransportByType(type) {
+    switch (type) {
       case 'fetch':
         return new FetchTransport(this.options_);
       case 'xhr':
@@ -60,7 +60,7 @@ class Api {
       case 'websocket':
         return new WebSocketTransport(this.options_);
       default:
-        throw new Error(`unknown transport name: ${name}`);
+        throw new Error(`unknown transport type: ${type}`);
     }
   }
 

@@ -32,4 +32,14 @@ const Transport = function () { };
  */
 Transport.prototype.call = function (name, encoder, decoder, observer, opt_endpoint) { };
 
+/**
+ * @public
+ * @enum {string}
+ */
+Transport.Type = {
+    XHR: 'xhr',
+    FETCH: 'fetch',
+    WEBSOCKET: 'websocket',
+};
+
 exports = Transport;

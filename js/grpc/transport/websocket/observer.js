@@ -46,6 +46,13 @@ class Observer extends BaseObserver {
     this.cancelled_ = false;
 
     /**
+     * A buffer for messages that may be populated if the websocket is not open yet.
+     * 
+     * @private @const @type {!Array<!ArrayBufferView>}
+     */
+    this.frameBuffer_ = [];
+
+    /**
      * The websocket instance
      * @private @type {!GoogNetWebSocket}
      */
@@ -83,7 +90,7 @@ class Observer extends BaseObserver {
 
     // this finishSendFrame can be sent directly to websocket and not via the
     // sendFrame function.
-    this.websocket_.send(finishSendFrame);
+    this.send(finishSendFrame);
   }
 
   /**
@@ -114,6 +121,13 @@ class Observer extends BaseObserver {
     }
 
     this.sendFrame(headersToBytes(headers));
+
+    // flush anything in the framebuffer
+    for (const frame of this.frameBuffer_) {
+      this.websocket_.send(frame);
+    }
+    // framebuffer should no longer be used
+    this.frameBuffer_.length = 0;
   }
 
   /**
@@ -155,6 +169,19 @@ class Observer extends BaseObserver {
     this.websocket_.close();
   }
 
+  /**
+   * Sends a message to the websocket.  Message will be buffered if the socket
+   * is not open yet.
+   * 
+   * @param {!ArrayBufferView} frame 
+   */
+  send(frame) {
+    if (!this.websocket_.isOpen()) {
+      this.frameBuffer_.push(frame);
+      return;
+    }
+    this.websocket_.send(frame);
+  }
 
   /**
    * Sends a message to the websocket in a custom framing.
@@ -166,7 +193,19 @@ class Observer extends BaseObserver {
     c.set(new Uint8Array([0]));
     c.set(byteArray, 1);
 
-    this.websocket_.send(c);
+    this.send(c);
+  }
+
+  /**
+   * Base impl constructs only the /path portion.  For the websocket URL, we need
+   * protocol scheme, host, etc.
+   * @override
+   */
+  getEndpointUrl() {
+    const path = super.getEndpointUrl();
+    const protocol = getWebsocketProtocol();
+    const host = window.location.hostname;
+    return `${protocol}//${host}${path}`;
   }
 
   /**
@@ -194,4 +233,17 @@ function headersToBytes(headers) {
     buf += `${entry[0]}: ${entry[1]}\r\n`;
   }
   return encodeASCII(buf);
+}
+
+/**
+* @returns {string}
+*/
+function getWebsocketProtocol() {
+  if (window.location.protocol === 'https:') {
+    return 'wss:';
+  }
+  if (window.location.protocol === 'http:') {
+    return 'ws:';
+  }
+  throw new Error(`unexpected window.location.protocol: ${window.location.protocol}`);
 }
