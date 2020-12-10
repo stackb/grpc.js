@@ -97,6 +97,14 @@ class Observer extends BaseObserver {
    * Use the opened callback as the time to send request headers.
    */
   handleWebsocketOpened() {
+    this.sendHeaders();
+    this.flushFrameBuffer();
+  }
+
+  /**
+   * Sends the headers as a single message
+   */
+  sendHeaders() {
     const headers = new Headers();
 
     headers.append("content-type", "application/grpc-web+proto");
@@ -122,6 +130,12 @@ class Observer extends BaseObserver {
 
     this.sendFrame(headersToBytes(headers));
 
+  }
+
+  /**
+   * Flushes and pending messages.
+   */
+  flushFrameBuffer() {
     // flush anything in the framebuffer
     for (const frame of this.frameBuffer_) {
       this.websocket_.send(frame);
