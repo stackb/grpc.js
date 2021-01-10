@@ -216,10 +216,14 @@ class Observer extends BaseObserver {
    * @override
    */
   getEndpointUrl() {
-    const path = super.getEndpointUrl();
+    let path = super.getEndpointUrl();
+    if (!path.startsWith('/')) {
+      path = '/' + path;
+    }
     const protocol = getWebsocketProtocol();
     const host = window.location.hostname;
-    return `${protocol}//${host}${path}`;
+    const port = window.location.port;
+    return `${protocol}//${host}:${port}${path}`;
   }
 
   /**
