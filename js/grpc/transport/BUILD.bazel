@@ -1,10 +1,10 @@
-package(default_visibility = ["//visibility:public"])
-
 load(
     "@io_bazel_rules_closure//closure:defs.bzl",
     "closure_js_library",
     "closure_js_test",
 )
+
+package(default_visibility = ["//visibility:public"])
 
 closure_js_library(
     name = "loopback",
@@ -26,6 +26,7 @@ closure_js_library(
     srcs = [
         "xhr.js",
         "xhr/factory.js",
+        "xhr/observer.js",
     ],
     suppress = [
         "reportUnknownTypes",
@@ -95,6 +96,7 @@ closure_js_test(
     suppress = [
         "JSC_INVALID_CAST",
     ],
+    tags = ["manual"],  # WIP
     deps = [
         ":xhr",
         "//js/grpc",
