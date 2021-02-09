@@ -121,13 +121,6 @@ namespace grpc
             // The following 5 functions were copied from
             // google/protobuf/src/google/protobuf/stubs/strutil.h
 
-            inline bool HasPrefixString(const string &str,
-                                        const string &prefix)
-            {
-                return str.size() >= prefix.size() &&
-                       str.compare(0, prefix.size(), prefix) == 0;
-            }
-
             inline bool HasSuffixString(const string &str,
                                         const string &suffix)
             {
