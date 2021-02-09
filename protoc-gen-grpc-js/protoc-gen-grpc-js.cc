@@ -128,18 +128,6 @@ namespace grpc
                        str.compare(0, prefix.size(), prefix) == 0;
             }
 
-            inline string StripPrefixString(const string &str, const string &prefix)
-            {
-                if (HasPrefixString(str, prefix))
-                {
-                    return str.substr(prefix.size());
-                }
-                else
-                {
-                    return str;
-                }
-            }
-
             inline bool HasSuffixString(const string &str,
                                         const string &suffix)
             {
