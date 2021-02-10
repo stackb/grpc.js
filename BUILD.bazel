@@ -4,7 +4,7 @@ filegroup(
     srcs = [
         "BUILD.bazel",
         "WORKSPACE",
-        "//plugins/grpc_js/grpc:all_files",
+        "//protoc-gen-grpc-js:all_files",
         "//rules:all_files",
     ] + glob(["*.bzl"]),
     visibility = ["//visibility:public"],

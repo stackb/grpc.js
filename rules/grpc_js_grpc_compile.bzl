@@ -7,7 +7,7 @@ load(
 
 _default_plugins = [
     str(Label("@build_stack_rules_proto//plugins/closure/proto:proto")),
-    str(Label("//plugins/grpc_js/grpc:grpc")),
+    str(Label("//protoc-gen-grpc-js:grpc_js")),
 ]
 
 _grpc_js_grpc_compile_aspect = proto_compile_aspect(_default_plugins, "grpc_js_grpc_compile_aspect")

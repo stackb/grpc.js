@@ -1,19 +1,7 @@
-load(
-    "@build_stack_rules_proto//language/rules:proto_language_info_provider_test.bzl",
-    "proto_language_info_provider_test",
-)
-load(
-    "@build_stack_rules_proto//language/rules:proto_language_test.bzl",
-    "proto_language_test",
-)
-load(
-    "@build_stack_rules_proto//language/rules:proto_language.bzl",
-    "proto_language",
-)
-load(
-    "@build_stack_rules_proto//rules:proto_dependency.bzl",
-    "proto_dependency",
-)
+load("@build_stack_rules_proto//rules/proto:proto_language_info_provider_test.bzl", "proto_language_info_provider_test")
+load("@build_stack_rules_proto//rules/proto:proto_language_test.bzl", "proto_language_test")
+load("@build_stack_rules_proto//rules/proto:proto_language.bzl", "proto_language")
+load("@build_stack_rules_proto//rules:proto_dependency.bzl", "proto_dependency")
 
 proto_language(
     name = "grpc_js",
@@ -41,15 +29,6 @@ proto_language_test(
     deps = [":grpc_js"],
 )
 
-# Branch: master
-# Commit: beb6ac3b43247816c1a1ebf741ebf0c98203414a
-# Date: 2021-02-09 22:02:48 +0000 UTC
-# URL: https://github.com/stackb/grpc.js/commit/beb6ac3b43247816c1a1ebf741ebf0c98203414a
-#
-# Fix dangling build link (#7)
-#
-# * Fix dangling build ref
-# Size: 30483 (30 kB)
 proto_dependency(
     name = "com_github_stackb_grpc_js",
     repository_rule = "http_archive",
