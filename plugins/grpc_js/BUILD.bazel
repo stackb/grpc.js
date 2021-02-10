@@ -2,10 +2,7 @@ filegroup(
     name = "all_files",
     testonly = True,
     srcs = [
-        "BUILD.bazel",
-        "WORKSPACE",
         "//plugins/grpc_js/grpc:all_files",
-        "//rules:all_files",
-    ] + glob(["*.bzl"]),
+    ],
     visibility = ["//visibility:public"],
 )
