@@ -96,7 +96,7 @@ class Observer extends BaseObserver {
     }
 
     const options = {
-      method: "POST",
+      method: this.getEndpointMethod(),
       headers: headers,
       body: this.frameRequest(asserts.assertObject(this.getValue())),
       signal: controller.signal,

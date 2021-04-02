@@ -197,7 +197,7 @@ class Observer {
     // Get an xhr
     const xhr = this.xhr_ = this.xhrTransport_.createObject();
 
-    xhr.open("POST", this.getEndpointUrl());
+    xhr.open(this.getEndpointMethod(), this.getEndpointUrl());
 
     xhr.responseType = "text";
     xhr.overrideMimeType("text/plain; charset=x-user-defined");
