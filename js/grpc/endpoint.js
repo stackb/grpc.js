@@ -14,6 +14,7 @@ goog.module('grpc.Endpoint');
   * @typedef{{
     path:(string|undefined),
     host:(string|undefined),
+    method:(string|undefined),
     port:(number|undefined),
     transport:(string|undefined),
   }}

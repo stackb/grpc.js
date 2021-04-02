@@ -192,7 +192,11 @@ class Observer {
     this.handler_.listen(xhr, NetEventType.TIMEOUT, this.handleXhrTimeout);
 
     // Send it!
-    this.xhr_.send(this.getEndpointUrl(), "POST", this.frameRequest(this.value_), this.headers_);
+    this.xhr_.send(
+      this.getEndpointUrl(),
+      this.getEndpointMethod(),
+      this.frameRequest(this.value_),
+      this.headers_);
 
     return this;
   }

@@ -33,9 +33,6 @@ class Observer {
    */
   constructor(options, name, encoder, decoder, observer, opt_endpoint) {
 
-    // console.log('grpc options: ', options);
-    // console.log('opt_endpoint: ', opt_endpoint);
-
     /** @const @protected */
     this.options = options;
 
@@ -180,6 +177,18 @@ class Observer {
     // Switch to UNKNOWN status just before sending the request.
     // Demarcates that the request has committed.
     this.setStatus(GrpcStatus.UNKNOWN);
+  }
+
+  /**
+   * Get the endpoint method.
+   * @protected
+   * @return {string} THe URL to connect method
+   */
+  getEndpointMethod() {
+    if (this.endpoint_ && this.endpoint_.method) {
+      return this.endpoint_.method;
+    }
+    return "POST";
   }
 
   /**
