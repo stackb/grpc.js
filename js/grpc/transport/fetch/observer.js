@@ -11,6 +11,7 @@ const GrpcStatus = goog.require('grpc.Status');
 const JspbByteSource = goog.require('jspb.ByteSource');
 const StreamObserver = goog.require('grpc.Observer');
 const asserts = goog.require('goog.asserts');
+const base64 = goog.require('goog.crypt.base64');
 const objects = goog.require('goog.object');
 
 /**
@@ -70,7 +71,7 @@ class Observer extends BaseObserver {
       return; // superclass failed, don't continue
     }
 
-    const url = this.getEndpointUrl();
+    let url = this.getEndpointUrl();
     const controller = this.controller_ = new AbortController();
     const headers = new Headers();
 
@@ -95,12 +96,16 @@ class Observer extends BaseObserver {
       });
     }
 
-    const options = {
-      method: this.getEndpointMethod(),
-      headers: headers,
-      body: this.frameRequest(asserts.assertObject(this.getValue())),
-      signal: controller.signal,
-    };
+    const method = this.getEndpointMethod();
+    const body = this.frameRequest(asserts.assertObject(this.getValue()));
+    const signal = controller.signal;
+    let options = { method, headers, body, signal };
+
+    if (options.method === "GET") {
+      const b64 = base64.encodeByteArray(/** @type {!Uint8Array} **/(body));
+      headers.append('x-grpc-web-request', b64);
+      options = { method, headers, signal };
+    }
 
     fetch(url, options)
       .then(goog.bind(this.handleFetchResponse, this))
