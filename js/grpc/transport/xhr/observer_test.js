@@ -55,7 +55,7 @@ testSuite({
     // POSTing to root of origin with given name.
     assertEquals('POST', xhr.getLastMethod());
     assertEquals('/mockService.getFoo', xhr.getLastUri());
-    assertEquals("application/grpc-web+proto", xhr.getLastRequestHeaders()["content-type"]);
+    assertEquals("application/grpc-web+proto", xhr.getLastRequestHeaders()["Content-Type"]);
     assertEquals("1", xhr.getLastRequestHeaders()["x-grpc-web"]);
     assertTrue(/** @type {!Uint8Array} */(xhr.getLastContent()) instanceof Uint8Array);
     // First 5 is the frame header, then the encoded protobuf
@@ -349,7 +349,7 @@ class MockXhr extends Xhr {
     this.xhr = xhr;
 
     xhr.setProgressEventsEnabled(true);
-    xhr.headers.set("content-type", "application/grpc-web+proto");
+    xhr.headers.set("Content-Type", "application/grpc-web+proto");
     xhr.headers.set("x-grpc-web", "1");
     xhr.headers.set("x-user-agent", "grpc-web-javascript/0.1");
   }
