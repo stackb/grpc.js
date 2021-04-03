@@ -107,7 +107,7 @@ class Observer extends BaseObserver {
   sendHeaders() {
     const headers = new Headers();
 
-    headers.append("content-type", "application/grpc-web+proto");
+    headers.append("Content-Type", "application/grpc-web+proto");
     headers.append("x-grpc-web", "1");
     headers.append("x-user-agent", "grpc-web-javascript/0.1");
 

@@ -203,7 +203,7 @@ class Observer {
     xhr.overrideMimeType("text/plain; charset=x-user-defined");
 
     // Basic Headers for grpc
-    xhr.setRequestHeader("content-type", "application/grpc-web+proto");
+    xhr.setRequestHeader("Content-Type", "application/grpc-web+proto");
     xhr.setRequestHeader("x-grpc-web", "1");
     xhr.setRequestHeader("x-user-agent", "grpc-web-javascript/0.1");
 

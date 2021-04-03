@@ -34,7 +34,7 @@ class XhrIo extends XhrIoPool {
     const xhr = new GoogXhrIo(XhrFactory.getInstance());
     xhr.setProgressEventsEnabled(true);
     xhr.setResponseType(GoogXhrIo.ResponseType.TEXT);
-    xhr.headers.set("content-type", "application/grpc-web+proto");
+    xhr.headers.set("Content-Type", "application/grpc-web+proto");
     xhr.headers.set("x-grpc-web", "1");
     xhr.headers.set("x-user-agent", "grpc-web-javascript/0.1");
     return xhr;
