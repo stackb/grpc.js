@@ -1,4 +1,15 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@build_stack_rules_proto//rules:proto_plugin.bzl", "proto_plugin")
+
 package(default_visibility = ["//visibility:public"])
+
+proto_plugin(
+    name = "grpc_js",
+    exclusions = ["google/protobuf"],  # TODO(pcj): is this needed?
+    outputs = ["{protopath}.grpc.js"],
+    tool = ":protoc-gen-grpc-js",
+    visibility = ["//visibility:public"],
+)
 
 cc_binary(
     name = "protoc-gen-grpc-js",
@@ -8,4 +19,11 @@ cc_binary(
     deps = [
         "@com_google_protobuf//:protoc_lib",
     ],
+)
+
+filegroup(
+    name = "all_files",
+    testonly = True,
+    srcs = glob(["**"]),
+    visibility = ["//visibility:public"],
 )

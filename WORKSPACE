@@ -1,37 +1,78 @@
 workspace(name = "com_github_stackb_grpc_js")
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
-http_archive(
-    name = "bazel_skylib",
-    sha256 = "bbccf674aa441c266df9894182d80de104cabd19be98be002f6d478aaa31574d",
-    strip_prefix = "bazel-skylib-2169ae1c374aab4a09aa90e65efe1a3aad4e279b",
-    urls = ["https://github.com/bazelbuild/bazel-skylib/archive/2169ae1c374aab4a09aa90e65efe1a3aad4e279b.tar.gz"],
+local_repository(
+    name = "build_stack_rules_proto",
+    path = "../rules_proto",
 )
 
-# ================================================================
-
-RULES_CLOSURE_VERSION = "50d3dc9e6d27a5577a0f95708466718825d579f4"
-
-http_archive(
-    name = "io_bazel_rules_closure",
-    url = "https://github.com/bazelbuild/rules_closure/archive/%s.zip" % RULES_CLOSURE_VERSION,
-    strip_prefix = "rules_closure-%s" % RULES_CLOSURE_VERSION,
+load(
+    "@build_stack_rules_proto//:deps.bzl",
+    "bazel_gazelle",
+    "bazel_skylib",
+    "com_github_grpc_grpc",
+    "com_google_protobuf",
+    "io_bazel_rules_closure",
+    "io_bazel_rules_go",
+    "rules_cc",
+    "zlib",
 )
 
-http_archive(
-    name = "net_zlib",
-    build_file = "@io_bazel_rules_closure//:third_party/zlib.BUILD",
-    sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
-    strip_prefix = "zlib-1.2.11",
-    urls = ["https://zlib.net/zlib-1.2.11.tar.gz"],
+# ==================================================
+# C++
+# ==================================================
+#
+rules_cc()
+
+# ==================================================
+# Go
+# ==================================================
+#
+io_bazel_rules_go()
+
+bazel_gazelle()
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains()
+
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
+
+gazelle_dependencies()
+
+# ==================================================
+# closure
+# ==================================================
+#
+io_bazel_rules_closure()
+
+load("@io_bazel_rules_closure//closure:repositories.bzl", "rules_closure_dependencies", "rules_closure_toolchains")
+
+rules_closure_dependencies(
+    omit_bazel_skylib = True,
+    omit_com_google_protobuf = True,
+    omit_zlib = True,
 )
 
-bind(
-    name = "zlib",
-    actual = "@net_zlib//:zlib",
-)
+rules_closure_toolchains()
 
-load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
+# ==================================================
+# Protobuf
+# ==================================================
+#
+com_google_protobuf()
 
-closure_repositories()
+bazel_skylib()
+
+zlib()
+
+# ==================================================
+# gRPC
+# ==================================================
+#
+com_github_grpc_grpc()
+
+load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+
+grpc_deps()
