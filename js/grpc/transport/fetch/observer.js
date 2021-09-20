@@ -163,7 +163,7 @@ class Observer extends BaseObserver {
 
   /**
    * @param {?ReadableStreamDefaultReader|?ReadableStreamBYOBReader} reader 
-   * @suppress {checkTypes}
+   * @suppress {reportUnknownTypes}
    */
   pump(reader) {
     if (!reader) {
