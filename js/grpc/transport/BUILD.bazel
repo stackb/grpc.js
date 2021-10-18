@@ -16,7 +16,6 @@ closure_js_library(
     ],
     deps = [
         "//js/grpc",
-        "@io_bazel_rules_closure//closure/library",
         "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
 )
@@ -35,7 +34,14 @@ closure_js_library(
         "//js/grpc",
         "//js/grpc:options",
         "//js/grpc/transport/chunk",
-        "@io_bazel_rules_closure//closure/library",
+        "@com_google_javascript_closure_library//closure/goog/asserts",
+        "@com_google_javascript_closure_library//closure/goog/events",
+        "@com_google_javascript_closure_library//closure/goog/events:eventhandler",
+        "@com_google_javascript_closure_library//closure/goog/net:eventtype",
+        "@com_google_javascript_closure_library//closure/goog/net:httpstatus",
+        "@com_google_javascript_closure_library//closure/goog/net:xmlhttp",
+        "@com_google_javascript_closure_library//closure/goog/net:xmlhttpfactory",
+        "@com_google_javascript_closure_library//closure/goog/object",
         "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
 )
@@ -49,7 +55,9 @@ closure_js_library(
         "//js/grpc",
         "//js/grpc:options",
         "//js/grpc/transport/chunk",
-        "@io_bazel_rules_closure//closure/library",
+        "@com_google_javascript_closure_library//closure/goog/asserts",
+        "@com_google_javascript_closure_library//closure/goog/events:eventhandler",
+        "@com_google_javascript_closure_library//closure/goog/net:httpstatus",
         "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
 )
@@ -65,7 +73,10 @@ closure_js_library(
         "//js/grpc",
         "//js/grpc:options",
         "//js/grpc/transport/chunk",
-        "@io_bazel_rules_closure//closure/library",
+        "@com_google_javascript_closure_library//closure/goog/asserts",
+        "@com_google_javascript_closure_library//closure/goog/crypt:base64",
+        "@com_google_javascript_closure_library//closure/goog/events",
+        "@com_google_javascript_closure_library//closure/goog/object",
         "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
 )
@@ -81,8 +92,8 @@ closure_js_library(
         "//js/grpc",
         "//js/grpc:options",
         "//js/grpc/transport/chunk",
-        "@io_bazel_rules_closure//closure/library",
-        "@io_bazel_rules_closure//closure/library/net:websocket",
+        "@com_google_javascript_closure_library//closure/goog/net:websocket",
+        "@com_google_javascript_closure_library//closure/goog/object",
         "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
 )
@@ -101,9 +112,6 @@ closure_js_test(
         ":xhr",
         "//js/grpc",
         "//js/grpc:options",
-        "@io_bazel_rules_closure//closure/library",
-        "@io_bazel_rules_closure//closure/library:testing",
-        "@io_bazel_rules_closure//closure/library/ui:component",
         "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
 )

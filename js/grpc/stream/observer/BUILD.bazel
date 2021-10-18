@@ -1,9 +1,9 @@
-package(default_visibility = ["//visibility:public"])
-
 load(
     "@io_bazel_rules_closure//closure:defs.bzl",
     "closure_js_library",
 )
+
+package(default_visibility = ["//visibility:public"])
 
 closure_js_library(
     name = "call",
@@ -17,6 +17,7 @@ closure_js_library(
     ],
     deps = [
         "//js/grpc",
-        "@io_bazel_rules_closure//closure/library",
+        "@com_google_javascript_closure_library//closure/goog/events",
+        "@com_google_javascript_closure_library//closure/goog/promise:resolver",
     ],
 )

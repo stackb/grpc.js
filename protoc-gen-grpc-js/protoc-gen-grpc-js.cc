@@ -395,7 +395,7 @@ namespace grpc
                     " *\n"
                     " * @param {?Object<string,string>=} opt_headers\n"
                     " * @param {?GrpcEndpoint=} opt_endpoint\n"
-                    " * @return { { input: Observer<!$in$>, promise: !GoogPromise<void,!GrpcRejection> } }\n"
+                    " * @return { { input: !Observer<!$in$>, promise: !GoogPromise<void,!GrpcRejection> } }\n"
                     " */\n"
                     "$js_method_name$(onRequest, opt_headers, opt_endpoint) {\n");
                 printer->Indent();
