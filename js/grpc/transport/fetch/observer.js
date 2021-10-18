@@ -108,8 +108,8 @@ class Observer extends BaseObserver {
     }
 
     fetch(url, options)
-      .then(goog.bind(this.handleFetchResponse, this))
-      .catch(goog.bind(this.handleFetchError, this));
+      .then(res => this.handleFetchResponse(res))
+      .catch(err => this.handleFetchError(err));
   }
 
   /**
@@ -179,8 +179,8 @@ class Observer extends BaseObserver {
     this.reader_ = reader;
 
     reader.read()
-      .then(goog.bind(this.handleReadResult, this))
-      .catch(goog.bind(this.handleReadError, this));
+      .then(result => this.handleReadResult(result))
+      .catch(err => this.handleReadError(err));
   }
 
   /**
