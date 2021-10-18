@@ -1,11 +1,9 @@
-package(default_visibility = ["//visibility:public"])
-
 load(
     "@io_bazel_rules_closure//closure:defs.bzl",
     "closure_js_library",
-    "closure_js_test",
-    "closure_js_binary",
 )
+
+package(default_visibility = ["//visibility:public"])
 
 closure_js_library(
     name = "grpc",
@@ -17,7 +15,6 @@ closure_js_library(
         "transport.js",
     ],
     deps = [
-        "@io_bazel_rules_closure//closure/library",
         "@io_bazel_rules_closure//closure/protobuf:jspb",
     ],
 )
@@ -33,8 +30,7 @@ closure_js_library(
         "//js/grpc/transport:fetch",
         "//js/grpc/transport:websocket",
         "//js/grpc/transport:xhr",
-        "@io_bazel_rules_closure//closure/library",
-        "@io_bazel_rules_closure//closure/library/labs/useragent:browser",
+        "@com_google_javascript_closure_library//closure/goog/labs/useragent:browser",
     ],
 )
 
@@ -45,6 +41,5 @@ closure_js_library(
     ],
     deps = [
         ":grpc",
-        "@io_bazel_rules_closure//closure/library",
     ],
 )

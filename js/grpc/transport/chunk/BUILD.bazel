@@ -1,11 +1,10 @@
-package(default_visibility = ["//visibility:public"])
-
 load(
     "@io_bazel_rules_closure//closure:defs.bzl",
     "closure_js_library",
     "closure_js_test",
-    "closure_js_binary",
 )
+
+package(default_visibility = ["//visibility:public"])
 
 closure_js_library(
     name = "chunk",
@@ -14,7 +13,9 @@ closure_js_library(
         "parser.js",
     ],
     deps = [
-        "@io_bazel_rules_closure//closure/library",
+        "@com_google_javascript_closure_library//closure/goog/asserts",
+        "@com_google_javascript_closure_library//closure/goog/crypt",
+        "@com_google_javascript_closure_library//closure/goog/string",
     ],
 )
 
@@ -27,7 +28,6 @@ closure_js_test(
     entry_points = ["goog:grpc.transport.chunk.ParserTest"],
     deps = [
         ":chunk",
-        "@io_bazel_rules_closure//closure/library",
-        "@io_bazel_rules_closure//closure/library:testing",
+        "@com_google_javascript_closure_library//closure/goog:testing",
     ],
 )
